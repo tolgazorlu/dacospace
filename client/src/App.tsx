@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
 // @ts-nocheck
@@ -5,48 +6,23 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Landing from "./components/Landing";
 import About from "./components/About";
-import SingleCourse from "./components/SingleCourse";
 import { useState, useEffect } from "react";
 import Web3 from "web3";
 import contractJson from "./contracts/Dacospace.sol/Dacospace.json";
+import { LoginCallBack } from "@opencampus/ocid-connect-js";
 
-// import Dacospace from "./abis/Dacospace.json"; // Assuming you have the ABI in this path
-import config from "../config.json"; // Assuming you have a config file with network details
-import CourseContent from "./components/CourseContent";
 import { useOCAuth } from "@opencampus/ocid-connect-js";
 
-interface DecodedToken {
-  edu_username: string;
-  [key: string]: any;
-}
-
 function App() {
-  const { authState } = useOCAuth();
-  const [mmStatus, setMmStatus] = useState<string>("Not connected!");
-  const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [accountAddress, setAccountAddress] = useState<string | undefined>(
-    undefined
-  );
-  const [displayMessage, setDisplayMessage] = useState<string>("");
-  const [web3, setWeb3] = useState<Web3 | undefined>(undefined);
-  const [getNetwork, setGetNetwork] = useState<number | undefined>(undefined);
-  const [contracts, setContracts] = useState<Contracts | undefined>(undefined);
-  const [contractAddress, setContractAddress] = useState<string | undefined>(
-    undefined
-  );
-  const [loading, setLoading] = useState<boolean>(false);
-  const [txnHash, setTxnHash] = useState<string | null>(null);
-  const [showMessage, setShowMessage] = useState<boolean>(false);
-  const [ocidUsername, setOcidUsername] = useState<string | null>(null);
+  const { authState, ocAuth } = useOCAuth();
+  const [user, setUser] = useState();
 
   useEffect(() => {
     // Check if user is logged in with OCID
     if (authState.idToken) {
-      const decodedToken = jwtDecode<DecodedToken>(authState.idToken);
-      setOcidUsername(decodedToken.edu_username);
+      setUser(ocAuth.getAuthInfo());
     }
 
-    // Initialize Web3 and set contract
     (async () => {
       try {
         if (typeof window.ethereum !== "undefined") {
@@ -99,47 +75,62 @@ function App() {
     }
   };
 
-  const receive = async () => {
-    // Fetch message from the blockchain
-    if (contracts) {
-      try {
-        const displayMessage = await contracts.methods.read().call();
-        setDisplayMessage(displayMessage);
-      } catch (error) {
-        console.error("Failed to read from contract:", error);
-      }
-    }
+  // const receive = async () => {
+  //   // Fetch message from the blockchain
+  //   if (contracts) {
+  //     try {
+  //       const displayMessage = await contracts.methods.read().call();
+  //       setDisplayMessage(displayMessage);
+  //     } catch (error) {
+  //       console.error("Failed to read from contract:", error);
+  //     }
+  //   }
+  // };
+
+  // const send = async () => {
+  //   // Send message to the blockchain
+  //   const getMessage = (document.getElementById("message") as HTMLInputElement)
+  //     .value;
+  //   if (!getMessage.trim()) {
+  //     alert("Message cannot be empty.");
+  //     return;
+  //   }
+  //   setLoading(true);
+  //   setShowMessage(true);
+  //   if (contracts && accountAddress) {
+  //     try {
+  //       await contracts.methods
+  //         .write(getMessage)
+  //         .send({ from: accountAddress })
+  //         .on("transactionHash", (hash: string) => {
+  //           setTxnHash(hash);
+  //         });
+  //       // Auto-refresh message after sending
+  //       await receive();
+  //     } catch (error) {
+  //       console.error("Failed to write to contract:", error);
+  //     }
+  //   }
+  //   setLoading(false);
+  //   setTimeout(() => {
+  //     setShowMessage(false);
+  //   }, 3000);
+  // };
+
+  const onLoginSuccess = () => {
+    navigate("/");
   };
 
-  const send = async () => {
-    // Send message to the blockchain
-    const getMessage = (document.getElementById("message") as HTMLInputElement)
-      .value;
-    if (!getMessage.trim()) {
-      alert("Message cannot be empty.");
-      return;
-    }
-    setLoading(true);
-    setShowMessage(true);
-    if (contracts && accountAddress) {
-      try {
-        await contracts.methods
-          .write(getMessage)
-          .send({ from: accountAddress })
-          .on("transactionHash", (hash: string) => {
-            setTxnHash(hash);
-          });
-        // Auto-refresh message after sending
-        await receive();
-      } catch (error) {
-        console.error("Failed to write to contract:", error);
-      }
-    }
-    setLoading(false);
-    setTimeout(() => {
-      setShowMessage(false);
-    }, 3000);
+  const onLoginError = () => {
+    console.log("Error");
   };
+
+  const OCLoginCallback = () => (
+    <LoginCallBack
+      errorCallback={onLoginError}
+      successCallback={onLoginSuccess}
+    />
+  );
 
   return (
     <BrowserRouter>
@@ -147,10 +138,15 @@ function App() {
         <Route
           path="/"
           element={
-            <Landing connectWallet={ConnectWallet} isConnected={isConnected} />
+            <Landing
+              connectWallet={ConnectWallet}
+              authState={authState}
+              user={user}
+            />
           }
         />
         <Route path="/about" element={<About />} />
+        <Route path="/redirect" element={<OCLoginCallback />} />
       </Routes>
     </BrowserRouter>
   );

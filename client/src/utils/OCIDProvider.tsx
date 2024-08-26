@@ -1,14 +1,16 @@
+// components/OCIDProvider.tsx
+import { FC, ReactNode } from "react";
 import { OCConnect } from "@opencampus/ocid-connect-js";
 
 interface OCIDProviderProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 const opts = {
-  redirectUri: "http://localhost:3000/redirect",
+  redirectUri: "http://localhost:5173/redirect",
 };
 
-const OCIDProvider: React.FC<OCIDProviderProps> = ({ children }) => (
+const OCIDProvider: FC<OCIDProviderProps> = ({ children }) => (
   <OCConnect opts={opts} sandboxMode={true}>
     {children}
   </OCConnect>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ToastContainer } from "react-toastify";
 import Layout from "../Layouts";
 import Footer from "../Layouts/Footer";
@@ -8,9 +9,13 @@ import CourseCategories from "./CourseCategories";
 const Landing = ({
   connectWallet,
   isConnected,
+  authState,
+  user,
 }: {
   connectWallet: any;
   isConnected: boolean;
+  authState: any;
+  user: any;
 }) => {
   return (
     <>
@@ -27,8 +32,13 @@ const Landing = ({
         theme="dark"
         stacked
       />
-      <Layout connectWallet={connectWallet} isConnected={isConnected} />
-      <Hero />
+      <Layout
+        connectWallet={connectWallet}
+        isConnected={isConnected}
+        authState={authState}
+        user={user}
+      />
+      <Hero connectWallet={connectWallet} user={user} />
       {/* <PopularCourses courses={courses} item={item} setItem={setItem} /> */}
       <CourseCategories />
       <Footer />

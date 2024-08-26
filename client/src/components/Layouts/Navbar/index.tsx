@@ -20,10 +20,14 @@ const Navbar = ({
   connectWallet,
   isConnected,
   setIsOpenSidebar,
+  authState,
+  user,
 }: {
   connectWallet: any;
   isConnected: boolean;
   setIsOpenSidebar: (state: boolean) => void;
+  authState: any;
+  user: any;
 }) => {
   const { slug } = useParams<ParamType>();
   const location = useLocation();
@@ -157,8 +161,7 @@ const Navbar = ({
       </div>
       <div className="navbar-end">
         {/** USER PROCESS */}
-
-        {isConnected ? (
+        {isConnected || authState ? (
           <div className="dropdown dropdown-end">
             <label
               tabIndex={0}
@@ -191,9 +194,14 @@ const Navbar = ({
                     />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-base-content">Your Wallet</span>
+                    <span className="text-base-content">
+                      {user && user.edu_username}
+                    </span>
                     <span className="font-bold text-xl font-bandal text-primary">
-                      Connected
+                      {user &&
+                        user.eth_address.slice(0, 4) +
+                          "..." +
+                          user.eth_address.slice(-4)}
                     </span>{" "}
                   </div>
                 </a>
@@ -240,13 +248,19 @@ const Navbar = ({
               onClick={handleLogin}
               className="btn font-poppins btn-accent-content text-accent hover:primary/50 rounded"
             >
-              Connect OCID
+              <img
+                src="https://cryptologos.cc/logos/open-campus-edu-logo.svg?v=033"
+                className="w-8"
+              />
             </button>
             <button
               onClick={connectWallet}
               className="btn font-poppins btn-primary-content text-primary hover:primary/50 rounded"
             >
-              Connect Metamask
+              <img
+                className="w-8"
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/MetaMask_Fox.svg/1024px-MetaMask_Fox.svg.png"
+              />
             </button>
           </div>
         )}
