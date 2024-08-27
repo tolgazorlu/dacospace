@@ -4,6 +4,19 @@ pragma solidity ^0.8.19;
 contract Dacospace {
     address public owner;
 
+    // Simplified Course Struct for listing
+    struct CourseInfo {
+        uint256 id;
+        string title;
+        string slug;
+        string description;
+        string image;
+        string category;
+        uint256 cost;
+        uint256 rating;
+        uint256 sold;
+    }
+
     // Course Struct
     struct Course {
         uint256 id;
@@ -36,6 +49,7 @@ contract Dacospace {
     mapping(uint256 => Content) private contentMapping; // Optional, if needed for direct access
     mapping(address => uint256) public orderCount;
     mapping(address => mapping(uint256 => Order)) public orders;
+    uint256 public courseCount;
 
     // Events
     event Buy(address buyer, uint256 orderId, uint256 courseId);
@@ -151,8 +165,29 @@ contract Dacospace {
         require(success, "Withdrawal failed!");
     }
 
-    // Get Content Details
-    function getContent(uint256 _courseId, uint256 _contentId) public view returns (Content memory) {
-        return courses[_courseId].contents[_contentId];
+    // Function to get all courses
+    function getAllCourses() public view returns (CourseInfo[] memory) {
+        CourseInfo[] memory courseList = new CourseInfo[](courseCount);
+        uint256 currentIndex = 0;
+
+        for (uint256 i = 1; i <= courseCount; i++) {
+            Course storage course = courses[i];
+            if (course.id != 0) { // Ensure the course exists
+                courseList[currentIndex] = CourseInfo(
+                    course.id,
+                    course.title,
+                    course.slug,
+                    course.description,
+                    course.image,
+                    course.category,
+                    course.cost,
+                    course.rating,
+                    course.sold
+                );
+                currentIndex++;
+            }
+        }
+
+        return courseList;
     }
 }

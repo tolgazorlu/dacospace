@@ -1,28 +1,38 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Layout from "../Layouts";
 import Hero from "./Hero";
 import ParallaxPage from "./ParallaxPage";
 import Testimotion from "./Testimotion";
 import Vision from "./Vision";
 const About = ({
-    account,
-    setAccount,
+  connectWallet,
+  isConnected,
+  authState,
+  user,
 }: {
-    account: string | null;
-    setAccount: React.Dispatch<React.SetStateAction<string | null>>;
+  connectWallet: any;
+  isConnected: boolean;
+  authState: any;
+  user: any;
 }) => {
-    return (
-        <>
-            <Layout setAccount={setAccount} account={account} />
-            <div className="hidden lg:block">
-                <ParallaxPage />
-            </div>
-            <div className="block lg:hidden">
-                <Hero />
-                <Vision />
-                <Testimotion />
-            </div>
-        </>
-    );
+  return (
+    <>
+      <Layout
+        connectWallet={connectWallet}
+        isConnected={isConnected}
+        authState={authState}
+        user={user}
+      />
+      <div className="hidden lg:block">
+        <ParallaxPage />
+      </div>
+      <div className="block lg:hidden">
+        <Hero />
+        <Vision />
+        <Testimotion />
+      </div>
+    </>
+  );
 };
 
 export default About;

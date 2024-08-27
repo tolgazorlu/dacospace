@@ -161,7 +161,7 @@ const Navbar = ({
       </div>
       <div className="navbar-end">
         {/** USER PROCESS */}
-        {isConnected || authState ? (
+        {isConnected || user ? (
           <div className="dropdown dropdown-end">
             <label
               tabIndex={0}

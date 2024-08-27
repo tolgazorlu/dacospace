@@ -3,13 +3,36 @@
 import { useOCAuth } from "@opencampus/ocid-connect-js";
 import Calendar from "./Calendar";
 
-const index = ({ connectWallet, user }: { connectWallet: any; user: any }) => {
+const index = ({
+  connectWallet,
+  user,
+  addNewCourse,
+}: {
+  connectWallet: any;
+  user: any;
+  addNewCourse: any;
+}) => {
   const { ocAuth } = useOCAuth();
   const handleLogin = async () => {
     await ocAuth.signInWithRedirect({
       state: "opencampus",
     });
   };
+
+  // Example usage
+  const newCourse = {
+    id: 4,
+    title: "Data Science Essentials",
+    slug: "data-science-essentials",
+    description:
+      "An introductory course to data science, including data analysis and machine learning basics.",
+    image: "https://i.hizliresim.com/pxgajy0.png",
+    category: "Data Science",
+    cost: 4, // in wei
+    rating: 4,
+    sold: 200,
+  };
+
   return (
     <>
       <section className="lg:grid grid-cols-2 px-4 lg:px-24 overflow-hidden">
@@ -59,7 +82,12 @@ const index = ({ connectWallet, user }: { connectWallet: any; user: any }) => {
           </p>
           {user ? (
             <div className="flex flex-col mt-8 mb-8 lg:mb-16 space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
-              <button className="font-poppins inline-flex justify-center items-center py-3 px-5 font-medium text-center rounded bg-primary text-primary-content">
+              <button
+                onClick={() => {
+                  addNewCourse(newCourse);
+                }}
+                className="font-poppins inline-flex justify-center items-center py-3 px-5 font-medium text-center rounded bg-primary text-primary-content"
+              >
                 Start Here
               </button>
               <button className="font-poppins inline-flex justify-center items-center py-3 px-5 font-medium text-center rounded bg-primary-content text-primary shadow">

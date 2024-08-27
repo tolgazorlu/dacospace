@@ -5,17 +5,22 @@ import Footer from "../Layouts/Footer";
 import Hero from "./Banner";
 
 import CourseCategories from "./CourseCategories";
+import PopularCourses from "./PopularCourses";
 
 const Landing = ({
   connectWallet,
   isConnected,
   authState,
   user,
+  addNewCourse,
+  courses,
 }: {
   connectWallet: any;
   isConnected: boolean;
   authState: any;
   user: any;
+  addNewCourse: any;
+  courses: any;
 }) => {
   return (
     <>
@@ -38,8 +43,12 @@ const Landing = ({
         authState={authState}
         user={user}
       />
-      <Hero connectWallet={connectWallet} user={user} />
-      {/* <PopularCourses courses={courses} item={item} setItem={setItem} /> */}
+      <Hero
+        connectWallet={connectWallet}
+        user={user}
+        addNewCourse={addNewCourse}
+      />
+      <PopularCourses courses={courses} />
       <CourseCategories />
       <Footer />
     </>

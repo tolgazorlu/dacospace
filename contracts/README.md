@@ -24,16 +24,18 @@ forge compile
 forge test
 
 # For deploying the smart contracts
-forge script script/DeployGreeter.s.sol --broadcast --rpc-url https://rpc.open-campus-codex.gelato.digital/ --gas-limit 30000000 --with-gas-price 5gwei --skip-simulation
+forge script script/DeployDacospace.s.sol --broadcast --rpc-url https://rpc.open-campus-codex.gelato.digital/ --gas-limit 30000000 --with-gas-price 5gwei --skip-simulation
 
 # For verifying the smart contracts
 forge verify-contract \
   --rpc-url https://rpc.open-campus-codex.gelato.digital \
   --verifier blockscout \
   --verifier-url 'https://opencampus-codex.blockscout.com/api/' \
-  <deployed-contract-address> \
-  src/Greeter.sol:Greeter
+  0xa7dC712E754A3C71E466f5050fbb5DA5A8F0A351 \
+  src/Dacospace.sol:Dacospace
 
 # Display help information for Foundry
 forge help
 ```
+
+a7dc712e754a3c71e466f5050fbb5da5a8f0a35166cd59ac

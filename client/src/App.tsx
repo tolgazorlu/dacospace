@@ -16,6 +16,12 @@ import { useOCAuth } from "@opencampus/ocid-connect-js";
 function App() {
   const { authState, ocAuth } = useOCAuth();
   const [user, setUser] = useState();
+  const [web3, setWeb3] = useState(null);
+  const [contracts, setContracts] = useState(null);
+  const [accountAddress, setAccountAddress] = useState("");
+  const [networkId, setNetworkId] = useState(null);
+  const [contractAddress, setContractAddress] = useState("");
+  const [courses, setCourses] = useState([]);
 
   useEffect(() => {
     // Check if user is logged in with OCID
@@ -28,9 +34,8 @@ function App() {
         if (typeof window.ethereum !== "undefined") {
           const web3 = new Web3(window.ethereum);
           setWeb3(web3);
-          const networkId: any = await web3.eth.getChainId();
-          setGetNetwork(networkId);
-          const contractAddress = "0x48D2d71e26931a68A496F66d83Ca2f209eA9956E";
+          await web3.eth.getChainId();
+          const contractAddress = "0x3AfEEEe5b8974072cf14c34189dEc22b4aC1e2ab";
           setContractAddress(contractAddress);
           const Dacospace = new web3.eth.Contract(
             contractJson.abi,
@@ -132,6 +137,71 @@ function App() {
     />
   );
 
+  async function addNewCourse(courseDetails) {
+    if (window.ethereum) {
+      const web3 = new Web3(window.ethereum);
+      try {
+        await window.ethereum.request({ method: "eth_requestAccounts" });
+        const accounts = await web3.eth.getAccounts();
+        // const contract = new web3.eth.Contract(
+        //   contractJson.abi,
+        //   "0xfac1951650E27CD38DBBabdd5cE828ab5e4b22c9"
+        // );
+
+        //Call the addCourse function
+        const res = await contracts.methods
+          .list(
+            courseDetails.id,
+            courseDetails.title,
+            courseDetails.slug,
+            courseDetails.description,
+            courseDetails.image,
+            courseDetails.category,
+            courseDetails.cost,
+            courseDetails.rating,
+            courseDetails.sold
+          )
+          .send({ from: accounts[0] });
+
+        setTimeout(fetchCourse, 5000); // Wait 5 seconds before fetching courses
+
+        console.log(res);
+        // console.log(
+        //   "Method: ",
+        //   await contract.methods.getAllCourses().call(null, "latest")
+        // );
+        // fetchCourse();
+      } catch (error) {
+        console.error("Error adding course:", error);
+      }
+    } else {
+      console.error("MetaMask is not installed");
+    }
+  }
+
+  const fetchCourse = async () => {
+    if (contracts) {
+      try {
+        const fetchedCourses = [];
+        for (let i = 1; i <= 4; i++) {
+          const course = await contracts.methods.courses(i).call();
+          fetchedCourses.push(course);
+        }
+        setCourses(fetchedCourses);
+        console.log(courses);
+        console.log("Course: ", courses);
+      } catch (error) {
+        console.error("Error fetching course:", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (contracts) {
+      fetchCourse();
+    }
+  }, [contracts]);
+
   return (
     <BrowserRouter>
       <Routes>
@@ -142,10 +212,21 @@ function App() {
               connectWallet={ConnectWallet}
               authState={authState}
               user={user}
+              addNewCourse={addNewCourse}
+              courses={courses}
             />
           }
         />
-        <Route path="/about" element={<About />} />
+        <Route
+          path="/about"
+          element={
+            <About
+              connectWallet={ConnectWallet}
+              authState={authState}
+              user={user}
+            />
+          }
+        />
         <Route path="/redirect" element={<OCLoginCallback />} />
       </Routes>
     </BrowserRouter>
