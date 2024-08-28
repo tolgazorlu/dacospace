@@ -2,10 +2,10 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 
 import React, { useEffect, useState } from "react";
-import PopularCourses from "../Landing/PopularCourses";
 import CourseCategories from "../Landing/CourseCategories";
 import Footer from "../Layouts/Footer";
 import Layout from "../Layouts";
+import PopularCourses from "./PopularCourses";
 
 const AllCourses = ({
   courses,
@@ -13,6 +13,7 @@ const AllCourses = ({
   isConnected,
   authState,
   user,
+  contracts,
 }: any) => {
   const [listCoursesArray, setListCoursesArray] = useState(null);
 
@@ -34,7 +35,7 @@ const AllCourses = ({
       />
       {listCoursesArray == null ? (
         <>
-          <PopularCourses courses={courses} />
+          <PopularCourses courses={courses} contracts={contracts} user={user} />
         </>
       ) : (
         <div className="px-4 lg:px-24 py-10 mt-14 flex justify-center items-center h-96 bg-base-300">

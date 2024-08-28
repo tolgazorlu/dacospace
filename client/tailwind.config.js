@@ -24,9 +24,9 @@ export default {
     },
     animation: {
       'congrats': 'wiggle 0.3s linear infinite',
-      'leftToRight':'leftToRight 15s ease infinite',
-      textLeft: 'pulses 2s',
-      textRight: 'pulses 3s',
+      'leftToRight':'leftToRight 2s ease infinite',
+      textLeft: 'pulses 1s',
+      textRight: 'pulses 2s',
     },
     keyframes: {
       pulses: {

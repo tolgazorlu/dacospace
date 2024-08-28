@@ -4,7 +4,6 @@ import NeutronImage from "../../assets/parallax/neutron.png";
 import GroundImage from "../../assets/parallax/ground.png";
 import AstronoutImage from "../../assets/parallax/astronaut.png";
 import Hero from "./Hero";
-import Testimotion from "./Testimotion";
 import Vision from "./Vision";
 import Footer from "../Layouts/Footer";
 

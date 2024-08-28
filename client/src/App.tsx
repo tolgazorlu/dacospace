@@ -3,7 +3,7 @@
 // @ts-ignore
 // @ts-nocheck
 
-import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Landing from "./components/Landing";
 import About from "./components/About";
 import { useState, useEffect } from "react";
@@ -17,10 +17,7 @@ import AllCourses from "./components/AllCourses";
 function App() {
   const { authState, ocAuth } = useOCAuth();
   const [user, setUser] = useState();
-  const [web3, setWeb3] = useState(null);
   const [contracts, setContracts] = useState(null);
-  const [accountAddress, setAccountAddress] = useState("");
-  const [contractAddress, setContractAddress] = useState("");
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
@@ -32,7 +29,6 @@ function App() {
     (async () => {
       try {
         const web3 = new Web3(window.ethereum);
-        setWeb3(web3);
         await web3.eth.getChainId();
         const contractAddress = "0x3AfEEEe5b8974072cf14c34189dEc22b4aC1e2ab";
         setContractAddress(contractAddress);
@@ -216,7 +212,12 @@ function App() {
             />
           }
         />
-        <Route path="/courses" element={<AllCourses courses={courses} />} />
+        <Route
+          path="/courses"
+          element={
+            <AllCourses courses={courses} contracts={contracts} user={user} />
+          }
+        />
         <Route
           path="/redirect"
           element={
