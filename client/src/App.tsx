@@ -13,6 +13,7 @@ import { LoginCallBack } from "@opencampus/ocid-connect-js";
 
 import { useOCAuth } from "@opencampus/ocid-connect-js";
 import AllCourses from "./components/AllCourses";
+import CourseContent from "./components/CourseContent";
 
 function App() {
   const { authState, ocAuth } = useOCAuth();
@@ -31,7 +32,7 @@ function App() {
         const web3 = new Web3(window.ethereum);
         await web3.eth.getChainId();
         const contractAddress = "0x3AfEEEe5b8974072cf14c34189dEc22b4aC1e2ab";
-        setContractAddress(contractAddress);
+
         const Dacospace = new web3.eth.Contract(
           contractJson.abi,
           contractAddress
@@ -224,6 +225,16 @@ function App() {
             <LoginCallBack
               successCallback={onLoginSuccess}
               errorCallback={onLoginError}
+            />
+          }
+        />
+        <Route
+          path="/course/lessons/:slug"
+          element={
+            <CourseContent
+              connectWallet={ConnectWallet}
+              authState={authState}
+              user={user}
             />
           }
         />

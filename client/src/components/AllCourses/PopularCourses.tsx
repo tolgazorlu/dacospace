@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Web3 from "web3";
 
 const PopularCourses = ({ courses, contracts, user }: any) => {
+  const navigate = useNavigate();
   const dialogRef = useRef<HTMLDialogElement | null>(null);
 
   const [modalId, setModalId] = useState("");
@@ -112,7 +114,12 @@ const PopularCourses = ({ courses, contracts, user }: any) => {
               <p>{course.description}</p>
               <div className="card-actions justify-end">
                 {purchasedCourses[course.id] ? (
-                  <button className="btn btn-primary text-accent">
+                  <button
+                    className="btn btn-primary text-accent"
+                    onClick={() => {
+                      navigate(`/course/lessons/${courses[courseIndex]?.slug}`);
+                    }}
+                  >
                     Go to Lessons
                   </button>
                 ) : (
@@ -153,7 +160,12 @@ const PopularCourses = ({ courses, contracts, user }: any) => {
                     : "Cost not available"}
                 </button>
               ) : (
-                <button className="btn btn-primary text-accent">
+                <button
+                  className="btn btn-primary text-accent"
+                  onClick={() => {
+                    navigate(`/course/lessons/${courses[courseIndex]?.slug}`);
+                  }}
+                >
                   Go to Lessons
                 </button>
               )}

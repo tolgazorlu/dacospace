@@ -40,7 +40,7 @@ const AllCourses = ({
       ) : (
         <div className="px-4 lg:px-24 py-10 mt-14 flex justify-center items-center h-96 bg-base-300">
           <button className="btn btn-lg btn-primary">
-            Install Metamask to view courses.
+            Please install Metamask to view courses.
           </button>
         </div>
       )}
