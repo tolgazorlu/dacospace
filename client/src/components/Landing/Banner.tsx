@@ -2,16 +2,17 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useOCAuth } from "@opencampus/ocid-connect-js";
 import Calendar from "./Calendar";
+import { useNavigate } from "react-router-dom";
 
 const index = ({
   user,
-  addNewCourse,
 }: {
   connectWallet: any;
   user: any;
   addNewCourse: any;
 }) => {
   const { ocAuth } = useOCAuth();
+  const navigate = useNavigate();
   const handleLogin = async () => {
     await ocAuth.signInWithRedirect({
       state: "opencampus",
@@ -19,18 +20,18 @@ const index = ({
   };
 
   // Example usage
-  const newCourse = {
-    id: 4,
-    title: "Data Science Essentials",
-    slug: "data-science-essentials",
-    description:
-      "An introductory course to data science, including data analysis and machine learning basics.",
-    image: "https://i.hizliresim.com/pxgajy0.png",
-    category: "Data Science",
-    cost: 4, // in wei
-    rating: 4,
-    sold: 200,
-  };
+  // const newCourse = {
+  //   id: 4,
+  //   title: "Data Science Essentials",
+  //   slug: "data-science-essentials",
+  //   description:
+  //     "An introductory course to data science, including data analysis and machine learning basics.",
+  //   image: "https://i.hizliresim.com/pxgajy0.png",
+  //   category: "Data Science",
+  //   cost: 4, // in wei
+  //   rating: 4,
+  //   sold: 200,
+  // };
 
   return (
     <>
@@ -42,10 +43,10 @@ const index = ({
             role="alert"
           >
             <span className="text-xs bg-primary text-primary-content rounded-lg px-4 py-1.5 mr-3 ">
-              Discord
+              Open Campus
             </span>{" "}
             <span className="text-sm font-medium text-primary">
-              Let's join the server!
+              See what is inside
             </span>
             <svg
               className="ml-2 w-5 h-5"
@@ -76,7 +77,7 @@ const index = ({
             <div className="flex flex-col mt-8 mb-8 lg:mb-16 space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
               <button
                 onClick={() => {
-                  addNewCourse(newCourse);
+                  navigate("/courses");
                 }}
                 className="btn btn-lg btn-primary"
               >
@@ -95,9 +96,13 @@ const index = ({
                 />
                 <span className="ml-2"> Connect OCID</span>
               </button>
-              <button className="btn btn-lg bg-base-content text-base-300 hover:text-base-content">
-                Learn More About Open Campus
-              </button>
+              <a
+                href="https://id.opencampus.xyz/"
+                target="_blank"
+                className="btn btn-lg bg-base-content text-base-300 hover:text-base-content"
+              >
+                What is OCID?
+              </a>
             </div>
           )}
         </div>

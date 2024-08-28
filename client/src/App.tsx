@@ -14,6 +14,7 @@ import { LoginCallBack } from "@opencampus/ocid-connect-js";
 import { useOCAuth } from "@opencampus/ocid-connect-js";
 import AllCourses from "./components/AllCourses";
 import CourseContent from "./components/CourseContent";
+import Content from "./components/Content";
 
 function App() {
   const { authState, ocAuth } = useOCAuth();
@@ -232,6 +233,16 @@ function App() {
           path="/course/lessons/:slug"
           element={
             <CourseContent
+              connectWallet={ConnectWallet}
+              authState={authState}
+              user={user}
+            />
+          }
+        />
+        <Route
+          path="/day/content/:slug"
+          element={
+            <Content
               connectWallet={ConnectWallet}
               authState={authState}
               user={user}

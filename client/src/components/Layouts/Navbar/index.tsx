@@ -57,8 +57,8 @@ const Navbar = ({
   const navLinks: navLinks[] = [
     { name: "About", href: "/about" },
     { name: "Courses", href: "/courses" },
-    // { name: "FAQ", href: "/#faq" },
-    // { name: "Creator", href: "/creator" },
+    { name: "Github", href: "https://github.com/tolgazorlu/dacospace_v1" },
+    { name: "Creator", href: "https://www.linkedin.com/in/tolgazorlu/" },
   ];
 
   const handleLogin = async () => {
@@ -330,8 +330,9 @@ const Navbar = ({
             >
               <img
                 src="https://cryptologos.cc/logos/open-campus-edu-logo.svg?v=033"
-                className="w-8"
+                className="w-5"
               />
+              <span>LOGIN with OCID</span>
             </button>
           </div>
         )}

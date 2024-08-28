@@ -31,7 +31,7 @@ const CourseContent = ({
                 <ul className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <li>
                     <a
-                      href={"/question/"}
+                      href={`/day/content/introduction`}
                       className="max-w-lg p-6 rounded hover:bg-neutral hover:text-neutral-content bg-primary text-accent shadow-lg flex flex-col gap-2"
                     >
                       <span className="text-xl font-bold font-poppins">
@@ -74,7 +74,7 @@ const CourseContent = ({
                       className="max-w-lg p-6 rounded hover:bg-neutral hover:text-neutral-content bg-primary text-accent shadow-lg flex flex-col gap-2"
                     >
                       <span className="text-xl font-bold font-poppins">
-                        Data Structure and Algorithms
+                        Data Types and Algorithms
                       </span>
                     </a>
                   </li>
