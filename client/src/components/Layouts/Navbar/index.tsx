@@ -105,7 +105,7 @@ const Navbar = ({
         </button>
         <a href="/" className="flex items-center gap-2 normal-case text-xl">
           <span
-            className={`font-bold text-3xl font-bandal  ${location.pathname === "/about" ? "text-accent" : "text-primary"}`}
+            className={`font-bold text-3xl font-bandal  ${location.pathname === "/about" ? "text-[#435bff]" : "text-primary"}`}
           >
             dacospace
           </span>

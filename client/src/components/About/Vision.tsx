@@ -2,28 +2,30 @@ const Vision = () => {
   return (
     <>
       {/* Icon Blocks */}
-      <div className="px-4 mx-auto lg:px-24 font-poppins">
+      <div className="px-4 mx-auto lg:px-24 py-10 font-poppins">
         {/* Grid */}
         <div className="grid md:grid-cols-2 gap-12">
           <div className="lg:w-3/4">
             <h2 className="text-3xl text-gray-200 font-bold lg:text-3xl">
-              Collaborative tools to design better user experience
+              Empowering Learning with Blockchain Technology
             </h2>
             <p className="mt-3 text-gray-400">
-              We help businesses bring ideas to life in the digital world, by
-              designing and implementing the technology tools that they need to
-              win. <br />
+              We empower individuals to expand their knowledge and skills in the
+              digital world by offering courses powered by blockchain
+              technology. Our platform ensures secure, transparent transactions,
+              giving you access to the tools you need to succeed.
               <br />
-              We help businesses bring ideas to life in the digital world, by
-              designing and implementing the technology tools that they need to
-              win.
+              <br />
+              We provide a seamless and innovative learning experience, allowing
+              you to purchase and access courses using EDU tokens on the
+              EduChain. Join us in transforming education for the digital age.
             </p>
             <p className="mt-5">
               <a
-                className="inline-flex items-center gap-x-1 font-medium text-accent"
+                className="inline-flex items-center gap-x-1 font-medium text-[#435bff]"
                 href="#"
               >
-                Contact sales to learn more
+                Explore courses to start learning more ➜
                 <svg
                   className="flex-shrink-0 size-4 transition ease-in-out group-hover:translate-x-1"
                   xmlns="http://www.w3.org/2000/svg"
@@ -65,12 +67,14 @@ const Vision = () => {
               </span>
               <div className="ms-5 sm:ms-8">
                 <h3 className="text-base sm:text-lg font-semibold text-gray-300">
-                  Industry-leading documentation
+                  Industry-leading Education Platform
                 </h3>
                 <p className="mt-1 text-gray-500">
-                  Our documentation and extensive Client libraries contain
-                  everything a business needs to build a custom integration in a
-                  fraction of the time.
+                  Our platform leverages cutting-edge blockchain technology,
+                  ensuring secure and transparent transactions. With our
+                  extensive resources and seamless integration, you can quickly
+                  start your learning journey, backed by the reliability of the
+                  EduChain powered by OpenCampus.
                 </p>
               </div>
             </div>
@@ -97,11 +101,14 @@ const Vision = () => {
               </span>
               <div className="ms-5 sm:ms-8">
                 <h3 className="text-base sm:text-lg font-semibold text-gray-300">
-                  Developer community support
+                  Community-driven Growth
                 </h3>
                 <p className="mt-1 text-gray-500">
-                  We actively contribute to open-source projects—giving back to
-                  the community through development, patches, and sponsorships.
+                  We believe in the power of collaboration. Our community of
+                  learners and educators drives continuous improvement, sharing
+                  knowledge and experiences that enrich the entire platform.
+                  Join a thriving network where your success fuels the
+                  collective growth.
                 </p>
               </div>
             </div>
@@ -128,11 +135,14 @@ const Vision = () => {
               </span>
               <div className="ms-5 sm:ms-8">
                 <h3 className="text-base sm:text-lg font-semibold text-gray-300">
-                  Simple and affordable
+                  Accessible and Affordable Learning
                 </h3>
                 <p className="mt-1 text-gray-500">
-                  From boarding passes to movie tickets, there's pretty much
-                  nothing you can't store with Preline.
+                  Education should be accessible to everyone. Our platform
+                  offers a variety of courses at affordable prices, enabling you
+                  to learn and grow without breaking the bank. Invest in your
+                  future with courses that are priced right, with daily content
+                  that keeps you engaged and on track.
                 </p>
               </div>
             </div>

@@ -6,10 +6,11 @@ import AstronoutImage from "../../assets/parallax/astronaut.png";
 import Hero from "./Hero";
 import Testimotion from "./Testimotion";
 import Vision from "./Vision";
+import Footer from "../Layouts/Footer";
 
 const ParallaxPage = () => {
   return (
-    <Parallax pages={1.5} className="bg-black">
+    <Parallax pages={1.47} className="bg-black">
       <ParallaxLayer offset={0.1} speed={1}>
         <img src={StarsImage} className="absolute animate-pulse z-[999]" />
       </ParallaxLayer>
@@ -33,7 +34,7 @@ const ParallaxPage = () => {
         <img src={AstronoutImage} className="z-[999]" />
         <Hero />
         <Vision />
-        <Testimotion />
+        <Footer />
       </ParallaxLayer>
     </Parallax>
   );

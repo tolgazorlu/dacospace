@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Layout from "../Layouts";
+import Footer from "../Layouts/Footer";
 import Hero from "./Hero";
 import ParallaxPage from "./ParallaxPage";
 import Testimotion from "./Testimotion";
@@ -30,6 +31,7 @@ const About = ({
         <Hero />
         <Vision />
         <Testimotion />
+        <Footer />
       </div>
     </>
   );
