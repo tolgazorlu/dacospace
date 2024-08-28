@@ -1,17 +1,50 @@
-import { useNavigate } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
 
 const PopularCourses = ({ courses }: any) => {
-  const navigate = useNavigate();
+  const dialogRef = useRef<HTMLDialogElement | null>(null);
+
+  const [modalId, setModalId] = useState("");
+  const [courseIndex, setCourseIndex] = useState(0);
+
+  useEffect(() => {
+    if (modalId && dialogRef.current) {
+      dialogRef.current.showModal();
+    }
+  }, [modalId]);
+
+  const openModal = (courseId: string, index: number) => {
+    setCourseIndex(index);
+    setModalId(courseId);
+  };
+
+  const closeModal = () => {
+    setModalId("");
+    setCourseIndex(0);
+    if (dialogRef.current) {
+      dialogRef.current.close();
+    }
+  };
+
+  console.log(courses);
+
   return (
     <div className="px-4 lg:px-24 py-10">
       {/* Title */}
-      <h1 className="text-2xl font-semibold mb-4">Popular Courses</h1>
+      <div className="flex flex-col items-center py-4">
+        <h1 className="text-2xl font-semibold text-center">Best Courses</h1>
+        <span className="text-lg font-light mb-4">
+          You can select what you need to learn.
+        </span>
+      </div>
       {/* End Title */}
       {/* Grid */}
       <div className="grid sm:grid-cols-4 gap-4">
         {/* Card */}
         {courses.map((course: any, index: number) => (
-          <div className="card card-compact bg-base-100 shadow-xl " key={index}>
+          <div
+            className="card card-compact bg-base-100 shadow-xl border-2 border-accent"
+            key={index}
+          >
             <figure>
               <img
                 src={course.image}
@@ -24,22 +57,36 @@ const PopularCourses = ({ courses }: any) => {
               <p>{course.description}</p>
               <div className="card-actions justify-end">
                 <button
-                  className="btn btn-warning text-accent-content"
-                  onClick={() => {
-                    // setItem(course);
-                    navigate(`/course/${course.title.slice(0, 5)}`);
-                  }}
+                  className="btn btn-primary text-primary-content"
+                  onClick={() => openModal(course.id, index)}
                 >
-                  Go to Course
+                  Buy this course
                 </button>
               </div>
             </div>
           </div>
         ))}
-
         {/* End Card */}
       </div>
       {/* End Grid */}
+
+      {/* Modal */}
+      <dialog ref={dialogRef} className="modal">
+        <div className="modal-box w-10/12 max-w-5xl p-0 border-2 border-primary">
+          <img src={courses[courseIndex]?.image} className="w-full" />
+          <div className="p-4">
+            <h3 className="font-bold text-lg">{courses[courseIndex]?.title}</h3>
+            <p>{courses[courseIndex]?.description}</p>
+            <div className="modal-action py-4">
+              <button className="btn" onClick={closeModal}>
+                Close
+              </button>
+              <button className="btn btn-primary">Buy this course</button>
+            </div>
+          </div>
+        </div>
+      </dialog>
+      {/* End Modal */}
     </div>
   );
 };

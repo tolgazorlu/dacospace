@@ -19,7 +19,6 @@ function App() {
   const [web3, setWeb3] = useState(null);
   const [contracts, setContracts] = useState(null);
   const [accountAddress, setAccountAddress] = useState("");
-  const [networkId, setNetworkId] = useState(null);
   const [contractAddress, setContractAddress] = useState("");
   const [courses, setCourses] = useState([]);
 

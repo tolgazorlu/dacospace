@@ -39,13 +39,15 @@ const index = ({
         <div className="h-screen md:snap-start flex flex-col justify-center">
           <a
             href="https://discord.gg/VWz8eYjtf3"
-            className="bg-neutral text-neutral-content inline-flex justify-between items-center py-1 px-1 pr-4 mb-7 text-sm rounded-xl md:w-1/2 lg:w-2/3"
+            className="border border-primary text-primary inline-flex justify-between items-center py-1 px-1 pr-4 mb-7 text-sm rounded-xl md:w-1/2 lg:w-2/3"
             role="alert"
           >
-            <span className="text-xs bg-neutral text-neutral-content rounded-lg px-4 py-1.5 mr-3 border">
+            <span className="text-xs bg-primary text-primary-content rounded-lg px-4 py-1.5 mr-3 ">
               Discord
             </span>{" "}
-            <span className="text-sm font-medium">Let's join the server!</span>
+            <span className="text-sm font-medium text-primary">
+              Let's join the server!
+            </span>
             <svg
               className="ml-2 w-5 h-5"
               fill="currentColor"
@@ -60,21 +62,12 @@ const index = ({
             </svg>
           </a>
 
-          <span className="text-6xl lg:text-8xl font-extrabold tracking-tight leading-none  font-bandal">
+          <span className="text-6xl lg:text-8xl font-extrabold tracking-tight leading-none font-bandal text-primary">
             dacospace
           </span>
-          <h1 className="font-title font-bandal text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] [word-break:auto-phrase] xl:w-[115%] xl:text-start [:root[dir=rtl]_&amp;]:leading-[1.35]">
-            <span className="inline-grid">
-              <span
-                className="text-3xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-5xl font-poppins pointer-events-none col-start-1 row-start-1 bg-[linear-gradient(90deg,theme(colors.error)_0%,theme(colors.secondary)_9%,theme(colors.secondary)_42%,theme(colors.success)_47%,theme(colors.accent)_100%)] bg-clip-text blur-xl [-webkit-text-fill-color:transparent] [transform:translate3d(0,0,0)] before:content-[attr(data-text)] [@supports(color:oklch(0_0_0))]:bg-[linear-gradient(90deg,oklch(var(--s))_4%,color-mix(in_oklch,oklch(var(--s)),oklch(var(--er)))_22%,oklch(var(--p))_45%,color-mix(in_oklch,oklch(var(--p)),oklch(var(--a)))_67%,oklch(var(--a))_100.2%)]"
-                aria-hidden="true"
-                data-text="Don't Break The Chain!"
-              ></span>
-              <span className="mb-4 text-3xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-5xl font-poppins [&amp;::selection]:text-base-content relative col-start-1 row-start-1 bg-[linear-gradient(90deg,theme(colors.error)_0%,theme(colors.secondary)_9%,theme(colors.secondary)_42%,theme(colors.success)_47%,theme(colors.accent)_100%)] bg-clip-text [-webkit-text-fill-color:transparent] [&amp;::selection]:bg-blue-700/20 [@supports(color:oklch(0_0_0))]:bg-[linear-gradient(90deg,oklch(var(--s))_4%,color-mix(in_oklch,oklch(var(--s)),oklch(var(--er)))_22%,oklch(var(--p))_45%,color-mix(in_oklch,oklch(var(--p)),oklch(var(--a)))_67%,oklch(var(--a))_100.2%)]">
-                Don't Break The Chain!
-              </span>
-            </span>
-          </h1>
+          <span className="mb-4 text-3xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-5xl font-poppins text-neutral">
+            Don't Break <span className="underline">The Chain!</span>
+          </span>
           <p className="mb-8 text-lg font-normal lg:text-xl font-poppins">
             Discover daily contents at{" "}
             <span className="font-bandal font-bold text-3xl">dacospace</span>,

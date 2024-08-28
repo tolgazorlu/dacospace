@@ -72,8 +72,24 @@ export default {
   },
   daisyui: {
     themes: [
-      "light",
-      "dark"
+      {
+        light: {
+          ...require("daisyui/src/theming/themes")["light"],
+          "primary": "#141BEB",
+          "primary-content": "#FFFFFF",
+          "accent": "#00ECBD"
+          
+        },
+      },
+      {
+        dark: {
+          ...require("daisyui/src/theming/themes")["dark"],
+          "primary": "#435bff",
+          "primary-content": "#FFFFFF",
+          "accent": "#00e8b7"
+          
+        },
+      },
     ],
   },
   
