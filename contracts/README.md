@@ -31,7 +31,7 @@ forge verify-contract \
   --rpc-url https://rpc.open-campus-codex.gelato.digital \
   --verifier blockscout \
   --verifier-url 'https://opencampus-codex.blockscout.com/api/' \
-  0xa7dC712E754A3C71E466f5050fbb5DA5A8F0A351 \
+  0x3AfEEEe5b8974072cf14c34189dEc22b4aC1e2ab \
   src/Dacospace.sol:Dacospace
 
 # Display help information for Foundry

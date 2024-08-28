@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/rules-of-hooks */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PopularCourses from "../Landing/PopularCourses";
 import CourseCategories from "../Landing/CourseCategories";
 import Footer from "../Layouts/Footer";
@@ -14,6 +14,16 @@ const AllCourses = ({
   authState,
   user,
 }: any) => {
+  const [listCoursesArray, setListCoursesArray] = useState(null);
+
+  useEffect(() => {
+    if (courses && courses.length == 0) {
+      setListCoursesArray(courses);
+    } else {
+      setListCoursesArray(null);
+    }
+  }, [courses]);
+
   return (
     <>
       <Layout
@@ -22,7 +32,17 @@ const AllCourses = ({
         authState={authState}
         user={user}
       />
-      <PopularCourses courses={courses} />
+      {listCoursesArray == null ? (
+        <>
+          <PopularCourses courses={courses} />
+        </>
+      ) : (
+        <div className="px-4 lg:px-24 py-10 mt-14 flex justify-center items-center h-96 bg-base-300">
+          <button className="btn btn-lg btn-primary">
+            Install Metamask to view courses.
+          </button>
+        </div>
+      )}
       <CourseCategories />
       <Footer />
     </>

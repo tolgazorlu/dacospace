@@ -78,11 +78,11 @@ const index = ({
                 onClick={() => {
                   addNewCourse(newCourse);
                 }}
-                className="font-poppins inline-flex justify-center items-center py-3 px-5 font-medium text-center rounded bg-primary text-primary-content"
+                className="btn btn-lg btn-primary"
               >
                 Start Here
               </button>
-              <button className="font-poppins inline-flex justify-center items-center py-3 px-5 font-medium text-center rounded bg-primary-content text-primary shadow">
+              <button className="btn btn-lg bg-base-content text-base-300 hover:text-base-content">
                 Learn More
               </button>
             </div>

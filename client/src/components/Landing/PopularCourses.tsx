@@ -26,8 +26,6 @@ const PopularCourses = ({ courses }: any) => {
     }
   };
 
-  console.log(courses);
-
   return (
     <div className="px-4 lg:px-24 py-10 mt-14">
       {/* Title */}
