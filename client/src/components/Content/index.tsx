@@ -8,6 +8,7 @@ import "highlight.js/styles/a11y-dark.css";
 import Layout from "../Layouts";
 
 import data from "./content.json";
+import DaysSidebar from "./DaysSidebar";
 
 const Content = ({ connectWallet, isConnected, authState, user }: any) => {
   return (
@@ -18,16 +19,18 @@ const Content = ({ connectWallet, isConnected, authState, user }: any) => {
         authState={authState}
         user={user}
       />
-      <div className="py-10 grid px-4 lg:px-24 gap-4 mt-20 md:p-10">
+      <div className="py-10 grid grid-cols-3 px-4 lg:px-24 gap-4 mt-20 md:p-10">
         {/** MARKDOWN SECTION */}
 
-        <div className="prose lg:prose-lg">
+        <div className="prose lg:prose-lg col-span-2">
           <Markdown
             remarkPlugins={[remarkGfm, remarkToc]}
             rehypePlugins={[rehypeHighlight, rehypeRaw]}
             children={data.markdownContent}
           />
         </div>
+
+        <DaysSidebar />
 
         {/** FOOTER */}
 
