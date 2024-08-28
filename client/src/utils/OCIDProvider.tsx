@@ -8,6 +8,7 @@ interface OCIDProviderProps {
 
 const opts = {
   redirectUri: "https://daco.space/redirect",
+  // redirectUri: "http://localhost:5173/redirect",
 };
 
 const OCIDProvider: FC<OCIDProviderProps> = ({ children }) => (

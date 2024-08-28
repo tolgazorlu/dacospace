@@ -4,7 +4,6 @@
 
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
-import Avatar from "boring-avatars";
 import { useOCAuth } from "@opencampus/ocid-connect-js";
 
 export type navLinks = {
@@ -17,10 +16,8 @@ type ParamType = {
 };
 
 const Navbar = ({
-  connectWallet,
   isConnected,
   setIsOpenSidebar,
-  authState,
   user,
 }: {
   connectWallet: any;
@@ -59,7 +56,7 @@ const Navbar = ({
 
   const navLinks: navLinks[] = [
     { name: "About", href: "/about" },
-    // { name: "Contact", href: "/#contact" },
+    { name: "Courses", href: "/courses" },
     // { name: "FAQ", href: "/#faq" },
     // { name: "Creator", href: "/creator" },
   ];
@@ -334,15 +331,6 @@ const Navbar = ({
               <img
                 src="https://cryptologos.cc/logos/open-campus-edu-logo.svg?v=033"
                 className="w-8"
-              />
-            </button>
-            <button
-              onClick={connectWallet}
-              className="btn font-poppins btn-primary-content text-primary hover:primary/50 rounded"
-            >
-              <img
-                className="w-8"
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/MetaMask_Fox.svg/1024px-MetaMask_Fox.svg.png"
               />
             </button>
           </div>

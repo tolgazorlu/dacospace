@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/rules-of-hooks */
+
 declare module "@opencampus/ocid-connect-js" {
   // Add the specific types you need from the module here.
   // If the module exports many things, you may start with a simple declaration.

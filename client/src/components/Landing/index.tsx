@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ToastContainer } from "react-toastify";
 import Layout from "../Layouts";
-import Footer from "../Layouts/Footer";
 import Hero from "./Banner";
-
-import CourseCategories from "./CourseCategories";
-import PopularCourses from "./PopularCourses";
 
 const Landing = ({
   connectWallet,
@@ -13,14 +9,12 @@ const Landing = ({
   authState,
   user,
   addNewCourse,
-  courses,
 }: {
   connectWallet: any;
   isConnected: boolean;
   authState: any;
   user: any;
   addNewCourse: any;
-  courses: any;
 }) => {
   return (
     <>
@@ -48,9 +42,6 @@ const Landing = ({
         user={user}
         addNewCourse={addNewCourse}
       />
-      <PopularCourses courses={courses} />
-      <CourseCategories />
-      <Footer />
     </>
   );
 };

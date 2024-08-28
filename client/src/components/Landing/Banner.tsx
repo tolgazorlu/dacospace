@@ -4,7 +4,6 @@ import { useOCAuth } from "@opencampus/ocid-connect-js";
 import Calendar from "./Calendar";
 
 const index = ({
-  connectWallet,
   user,
   addNewCourse,
 }: {
@@ -89,26 +88,15 @@ const index = ({
             </div>
           ) : (
             <div className="flex flex-col mt-8 mb-8 lg:mb-16 space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
-              <button
-                onClick={handleLogin}
-                className="font-poppins inline-flex justify-center items-center py-3 px-5 font-medium text-center rounded bg-accent-content text-accent"
-              >
+              <button onClick={handleLogin} className="btn btn-lg btn-primary">
                 <img
                   src="https://cryptologos.cc/logos/open-campus-edu-logo.svg?v=033"
                   className="w-8"
                 />
                 <span className="ml-2"> Connect OCID</span>
               </button>
-              <button
-                onClick={connectWallet}
-                className="font-poppins inline-flex justify-center items-center py-3 px-5 font-medium text-center rounded bg-warning-content text-warning shadow"
-              >
-                {" "}
-                <img
-                  className="w-8"
-                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/MetaMask_Fox.svg/1024px-MetaMask_Fox.svg.png"
-                />
-                <span className="ml-2"> Connect Metamask </span>
+              <button className="btn btn-lg bg-base-content text-base-300 hover:text-base-content">
+                Learn More About Open Campus
               </button>
             </div>
           )}

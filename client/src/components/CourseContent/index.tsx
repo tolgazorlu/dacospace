@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/rules-of-hooks */
+
 import Counter from "./Counter";
 
 const CourseContent = ({ item }: any) => {

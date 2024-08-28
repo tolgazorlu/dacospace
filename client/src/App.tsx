@@ -3,7 +3,7 @@
 // @ts-ignore
 // @ts-nocheck
 
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import Landing from "./components/Landing";
 import About from "./components/About";
 import { useState, useEffect } from "react";
@@ -12,6 +12,7 @@ import contractJson from "./contracts/Dacospace.sol/Dacospace.json";
 import { LoginCallBack } from "@opencampus/ocid-connect-js";
 
 import { useOCAuth } from "@opencampus/ocid-connect-js";
+import AllCourses from "./components/AllCourses";
 
 function App() {
   const { authState, ocAuth } = useOCAuth();
@@ -30,21 +31,17 @@ function App() {
 
     (async () => {
       try {
-        if (typeof window.ethereum !== "undefined") {
-          const web3 = new Web3(window.ethereum);
-          setWeb3(web3);
-          await web3.eth.getChainId();
-          const contractAddress = "0x3AfEEEe5b8974072cf14c34189dEc22b4aC1e2ab";
-          setContractAddress(contractAddress);
-          const Dacospace = new web3.eth.Contract(
-            contractJson.abi,
-            contractAddress
-          ) as Contracts;
-          setContracts(Dacospace);
-          Dacospace.setProvider(window.ethereum);
-        } else {
-          alert("Please install MetaMask!");
-        }
+        const web3 = new Web3(window.ethereum);
+        setWeb3(web3);
+        await web3.eth.getChainId();
+        const contractAddress = "0x3AfEEEe5b8974072cf14c34189dEc22b4aC1e2ab";
+        setContractAddress(contractAddress);
+        const Dacospace = new web3.eth.Contract(
+          contractJson.abi,
+          contractAddress
+        ) as Contracts;
+        setContracts(Dacospace);
+        Dacospace.setProvider(window.ethereum);
       } catch (error) {
         console.error("Failed to initialize web3 or contract:", error);
       }
@@ -122,19 +119,12 @@ function App() {
   // };
 
   const onLoginSuccess = () => {
-    navigate("/");
+    console.log("success");
   };
 
   const onLoginError = () => {
     console.log("Error");
   };
-
-  const OCLoginCallback = () => (
-    <LoginCallBack
-      errorCallback={onLoginError}
-      successCallback={onLoginSuccess}
-    />
-  );
 
   async function addNewCourse(courseDetails) {
     if (window.ethereum) {
@@ -226,7 +216,16 @@ function App() {
             />
           }
         />
-        <Route path="/redirect" element={<OCLoginCallback />} />
+        <Route path="/courses" element={<AllCourses courses={courses} />} />
+        <Route
+          path="/redirect"
+          element={
+            <LoginCallBack
+              successCallback={onLoginSuccess}
+              errorCallback={onLoginError}
+            />
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

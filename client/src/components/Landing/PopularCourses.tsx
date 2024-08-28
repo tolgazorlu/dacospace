@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useRef, useEffect } from "react";
 
 const PopularCourses = ({ courses }: any) => {
@@ -28,10 +29,10 @@ const PopularCourses = ({ courses }: any) => {
   console.log(courses);
 
   return (
-    <div className="px-4 lg:px-24 py-10">
+    <div className="px-4 lg:px-24 py-10 mt-14">
       {/* Title */}
-      <div className="flex flex-col items-center py-4">
-        <h1 className="text-2xl font-semibold text-center">Best Courses</h1>
+      <div className="flex flex-col items-start py-4">
+        <h1 className="text-2xl font-semibold">Best Courses</h1>
         <span className="text-lg font-light mb-4">
           You can select what you need to learn.
         </span>
@@ -42,7 +43,7 @@ const PopularCourses = ({ courses }: any) => {
         {/* Card */}
         {courses.map((course: any, index: number) => (
           <div
-            className="card card-compact bg-base-100 shadow-xl border-2 border-accent"
+            className="card card-compact bg-base-100 shadow-xl border-2 border-base-content"
             key={index}
           >
             <figure>
