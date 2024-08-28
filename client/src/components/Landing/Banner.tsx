@@ -65,7 +65,7 @@ const index = ({
           <span className="text-6xl lg:text-8xl font-extrabold tracking-tight leading-none font-bandal text-primary">
             dacospace
           </span>
-          <span className="mb-4 text-3xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-5xl font-poppins text-neutral">
+          <span className="mb-4 text-3xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-5xl font-poppins text-base-content">
             Don't Break <span className="underline">The Chain!</span>
           </span>
           <p className="mb-8 text-lg font-normal lg:text-xl font-poppins">

@@ -167,10 +167,52 @@ const Navbar = ({
               tabIndex={0}
               className="btn btn-circle overflow-hidden btn-ghost m-1"
             >
-              <Avatar
-                name="Margaret Brent"
-                colors={["#AAFF00", "#FFAA00", "#FF00AA", "#AA00FF", "#00AAFF"]}
-              />
+              <svg
+                viewBox="0 0 80 80"
+                fill="none"
+                role="img"
+                xmlns="http://www.w3.org/2000/svg"
+                width="50"
+                height="50"
+              >
+                <mask
+                  id=":r1t4:"
+                  maskUnits="userSpaceOnUse"
+                  x="0"
+                  y="0"
+                  width="80"
+                  height="80"
+                >
+                  <rect width="80" height="80" rx="160" fill="#FFFFFF"></rect>
+                </mask>
+                <g mask="url(#:r1t4:)">
+                  <rect width="80" height="80" fill="#00ecbd"></rect>
+                  <rect
+                    x="10"
+                    y="30"
+                    width="80"
+                    height="80"
+                    fill="#141beb"
+                    transform="translate(10 10) rotate(134 40 40)"
+                  ></rect>
+                  <circle
+                    cx="40"
+                    cy="40"
+                    fill="#00ecbd"
+                    r="16"
+                    transform="translate(-18 -18)"
+                  ></circle>
+                  <line
+                    x1="0"
+                    y1="40"
+                    x2="80"
+                    y2="40"
+                    stroke-width="2"
+                    stroke="#ffffff"
+                    transform="translate(-8 -8) rotate(268 40 40)"
+                  ></line>
+                </g>
+              </svg>
             </label>
             <ul
               tabIndex={0}
@@ -182,16 +224,57 @@ const Navbar = ({
                   className="px-4 py-3 text-sm flex items-center justify-between hover:text-neutral-content gap-3 rounded"
                 >
                   <div>
-                    <Avatar
-                      name="Margaret Brent"
-                      colors={[
-                        "#AAFF00",
-                        "#FFAA00",
-                        "#FF00AA",
-                        "#AA00FF",
-                        "#00AAFF",
-                      ]}
-                    />
+                    <svg
+                      viewBox="0 0 80 80"
+                      fill="none"
+                      role="img"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="50"
+                      height="50"
+                    >
+                      <mask
+                        id=":r1t4:"
+                        maskUnits="userSpaceOnUse"
+                        x="0"
+                        y="0"
+                        width="80"
+                        height="80"
+                      >
+                        <rect
+                          width="80"
+                          height="80"
+                          rx="160"
+                          fill="#FFFFFF"
+                        ></rect>
+                      </mask>
+                      <g mask="url(#:r1t4:)">
+                        <rect width="80" height="80" fill="#00ecbd"></rect>
+                        <rect
+                          x="10"
+                          y="30"
+                          width="80"
+                          height="80"
+                          fill="#141beb"
+                          transform="translate(10 10) rotate(134 40 40)"
+                        ></rect>
+                        <circle
+                          cx="40"
+                          cy="40"
+                          fill="#00ecbd"
+                          r="16"
+                          transform="translate(-18 -18)"
+                        ></circle>
+                        <line
+                          x1="0"
+                          y1="40"
+                          x2="80"
+                          y2="40"
+                          stroke-width="2"
+                          stroke="#ffffff"
+                          transform="translate(-8 -8) rotate(268 40 40)"
+                        ></line>
+                      </g>
+                    </svg>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-base-content">
