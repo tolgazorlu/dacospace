@@ -38,7 +38,7 @@ const index = ({
       <section className="lg:grid grid-cols-2 px-4 lg:px-24 overflow-hidden">
         <div className="h-screen md:snap-start flex flex-col justify-center">
           <a
-            href="https://discord.gg/VWz8eYjtf3"
+            href="https://www.opencampus.xyz/"
             className="border border-primary text-primary inline-flex justify-between items-center py-1 px-1 pr-4 mb-7 text-sm rounded-xl md:w-1/2 lg:w-2/3"
             role="alert"
           >
@@ -83,9 +83,13 @@ const index = ({
               >
                 Start Here
               </button>
-              <button className="btn btn-lg bg-base-content text-base-300 hover:text-base-content">
+              <a
+                href="https://dorahacks.io/buidl/15674"
+                target="_blank"
+                className="btn btn-lg bg-base-content text-base-300 hover:text-base-content"
+              >
                 Learn More
-              </button>
+              </a>
             </div>
           ) : (
             <div className="flex flex-col mt-8 mb-8 lg:mb-16 space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
