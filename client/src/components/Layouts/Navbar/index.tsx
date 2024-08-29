@@ -275,13 +275,13 @@ const Navbar = ({
                   </div>
                   <div className="flex flex-col">
                     <span className="text-base-content">
-                      {user && user.edu_username}
+                      {user && user?.edu_username}
                     </span>
                     <span className="font-bold text-xl font-bandal text-primary">
                       {user &&
-                        user.eth_address.slice(0, 4) +
+                        user?.eth_address?.slice(0, 4) +
                           "..." +
-                          user.eth_address.slice(-4)}
+                          user?.eth_address?.slice(-4)}
                     </span>{" "}
                   </div>
                 </a>

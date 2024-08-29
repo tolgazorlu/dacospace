@@ -3,7 +3,7 @@
 // @ts-ignore
 // @ts-nocheck
 
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import Landing from "./components/Landing";
 import About from "./components/About";
 import { useState, useEffect } from "react";
@@ -118,10 +118,16 @@ function App() {
 
   const onLoginSuccess = () => {
     console.log("success");
+    setTimeout(() => {
+      window.location.href = "/"; // Redirect to the homepage after 1 second
+    }, 2000); // 1000 milliseconds = 1 second
   };
 
   const onLoginError = () => {
     console.log("Error");
+    setTimeout(() => {
+      window.location.href = "/"; // Redirect to the homepage after 1 second
+    }, 2000); // 1000 milliseconds = 1 second
   };
 
   async function addNewCourse(courseDetails) {
