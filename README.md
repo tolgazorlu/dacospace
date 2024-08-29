@@ -1,33 +1,25 @@
 <a name="readme-top"></a>
 
 <!-- PROJECT LOGO -->
-<br />
 <div align="center">
   <a href="#">
     <img style="border-radius: 10px" src="/daco-logo.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">DACOSPACE</h3>
-
   <p align="center">
-    BY TOLGA ZORLU
-    <br />
     <a href="https://www.daco.space/"><strong>View Demo</strong></a>
     <br />
-    <br />
-    <a href="https://github.com/tolgazorlu/daco/issues">Report Bug</a>
+    <a href="https://github.com/tolgazorlu/dacospace/issues">Report Bug</a>
     ·
-    <a href="https://github.com/tolgazorlu/daco/issues">Request Feature</a>
+    <a href="https://github.com/tolgazorlu/dacospace/issues">Request Feature</a>
   </p>
 </div>
 
 ## About The Project
 
-DACO - Where Challenges Ignite Brilliance!
-
-Are you ready to embark on a daily journey of problem-solving and intellectual exploration? Look no further! DACO is your go-to destination for sharpening your coding skills and mastering the art of algorithms.
-
-Every day, we present you with <strong>two brand-new algorithm questions</strong> carefully crafted to challenge your mind and hone your problem-solving abilities. Whether you're a beginner eager to learn the basics or a seasoned coder aiming to refine your expertise, our daily challenges cater to all levels of proficiency.
+<h3><span style="color:#435bff">Daily Contents:</span> Elevate Your Learning Experience!</h3>
+Unlock your full potential with our unique daily content feature, designed to keep you engaged and motivated every step of the way. Our platform, powered by the innovative EduChain and Open Campus, allows you to purchase courses using EDU tokens. Once enrolled, you’ll gain access to daily lessons that guide you through your learning journey in a structured and manageable way. Whether you're mastering a new skill or diving deeper into a subject you're passionate about, our daily content ensures steady progress and continuous growth.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -35,7 +27,7 @@ Every day, we present you with <strong>two brand-new algorithm questions</strong
 
 ## Getting Started
 
-This is an MERN Stack example of e-commerce project.
+This is a Blockchain example of education project.
 To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
@@ -53,7 +45,7 @@ _Below is an example of how you can instruct your audience on installing and set
 
 1. Clone the repo
    ```sh
-   $ git clone https://github.com/tolgazorlu/dacospace_v1.git
+   $ git clone https://github.com/tolgazorlu/dacospace.git
    ```
 2. Install client packages
    ```sh
@@ -99,20 +91,12 @@ Don't forget to give the project a star! Thanks again!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- LICENSE -->
-
-## License
-
-Distributed under the MIT License. See `LICENSE.txt` for more information.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 <!-- CONTACT -->
 
 ## Contact
 
 Tolga Zorlu - [@linkedin](https://www.linkedin.com/in/tolgazorlu/)
 
-Project Link: [https://github.com/tolgazorlu/daco](https://github.com/tolgazorlu/dacospace_v1)
+Project Link: [https://github.com/tolgazorlu/dacospace](https://github.com/tolgazorlu/dacospace)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
