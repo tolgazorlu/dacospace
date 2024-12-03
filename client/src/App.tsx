@@ -3,7 +3,7 @@
 // @ts-ignore
 // @ts-nocheck
 
-import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Landing from "./components/Landing";
 import About from "./components/About";
 import { useState, useEffect } from "react";

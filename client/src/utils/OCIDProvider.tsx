@@ -7,7 +7,7 @@ interface OCIDProviderProps {
 }
 
 const opts = {
-  redirectUri: "https://daco.space/redirect",
+  redirectUri: "https://dacospacev1-tolgazorlus-projects.vercel.app/redirect",
   // redirectUri: "http://localhost:5173/redirect",
 };
 

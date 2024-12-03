@@ -67,6 +67,10 @@ const Navbar = ({
     });
   };
 
+  const handleLogout = () => {
+    localStorage.clear();
+  };
+
   return (
     <nav
       className={`navbar bg-base-100 fixed top-0 z-30 w-full px-4 lg:px-24 ${location.pathname === "/" ? "" : location.pathname === "/about" ? "bg-black text-[#A5ADBB]" : "bg-base-100 border-b border-base-300"}`}
@@ -318,6 +322,14 @@ const Navbar = ({
                       </svg>
                     </div>
                   )}
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="text-base-content hover:text-primary-content hover:bg-primary flex justify-between rounded"
+                >
+                  <span>Logout</span>
                 </button>
               </li>
             </ul>
