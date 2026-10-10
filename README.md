@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# dacospace
 
-## Getting Started
+One system design interview question a day, and an AI interviewer to
+work through it with.
 
-First, run the development server:
+The 2024 dacospace tried to teach everything at once. This version does one
+thing: every morning it hands you a realistic 45-minute interview question,
+holds back the details until you ask for them, and only shows the
+follow-ups and the rubric after you commit to an answer.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## How a day works
+
+1. Open the app. Today's question is picked for you: unseen questions
+   first, junior before mid before senior, never the same topic two days in
+   a row.
+2. Ask the interviewer. Each click reveals one clarification, the way a real
+   interviewer answers only what you ask.
+3. Start the clock and write your design.
+4. Submit. The follow-ups and the rubric unlock.
+5. Optional: run the `mock_interview` prompt from the MCP server in your AI
+   client. It plays the interviewer, saves your answer and writes a review
+   that shows up in the app.
+
+## Run it
+
+```sh
+pnpm install
+pnpm dev            # http://localhost:3000
+pnpm test           # core logic + MCP server end to end
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Answers and reviews live in `data/days/<date>.json` (gitignored). Set
+`DACOSPACE_DATA` to keep them elsewhere.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## MCP server
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`mcp/server.mts` is a stdio MCP server that shares the same files as the
+web app.
 
-## Learn More
+| Tool | What it does |
+|---|---|
+| `get_today` | Today's question as the candidate sees it, plus answer and review |
+| `get_interviewer_notes` | Clarifications, follow-ups, rubric, pitfalls (for the AI only) |
+| `save_answer` | Store the answer |
+| `save_review` | Store a verdict (`strong no hire` to `strong hire`) and notes |
+| `get_history` | Past days and verdicts |
+| `list_questions` | The bank, filterable by level or topic |
+| `add_question` | Add a validated question to `questions/` |
 
-To learn more about Next.js, take a look at the following resources:
+Prompt: `mock_interview` runs the whole interview.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Hermes:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```sh
+hermes mcp add dacospace --command /path/to/dacospace/node_modules/.bin/tsx --args /path/to/dacospace/mcp/server.mts
+```
 
-## Deploy on Vercel
+Claude Code:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```sh
+claude mcp add dacospace -- /path/to/dacospace/node_modules/.bin/tsx /path/to/dacospace/mcp/server.mts
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Any other client: command `/path/to/dacospace/node_modules/.bin/tsx`, args
+`/path/to/dacospace/mcp/server.mts`.
+
+## Questions
+
+30 questions ship in `questions/`, one markdown file each. The format is in
+[questions/README.md](questions/README.md). Add your own by hand or let an
+AI call `add_question`; `pnpm test` validates every file.
