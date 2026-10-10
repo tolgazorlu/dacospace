@@ -25,7 +25,7 @@ follow-ups and the rubric after you commit to an answer.
 
 ```sh
 pnpm install
-pnpm dev            # http://localhost:3000
+pnpm dev            # http://localhost:4120
 pnpm test           # core logic + MCP server end to end
 ```
 
