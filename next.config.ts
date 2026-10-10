@@ -1,9 +1,7 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
 
+// Local-first app: pages read questions/ and data/ on every request.
 const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
   turbopack: {
     rules: {
       "*.css": {
@@ -12,6 +10,6 @@ const nextConfig: NextConfig = {
       },
     },
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig
