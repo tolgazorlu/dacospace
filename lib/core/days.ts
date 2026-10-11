@@ -70,6 +70,7 @@ export function pickNext(bank: Question[], history: Day[]): Question {
   const prev = history[0] ? bank.find((q) => q.id === history[0].questionId) : undefined
   const rank = (q: Question) => [
     lastSeen.get(q.id) ?? "", // unseen ("") sorts first, then oldest
+    prev && q.track === prev.track ? 1 : 0, // alternate system design and AI questions
     LEVELS.indexOf(q.level),
     prev && q.topics.some((t) => prev.topics.includes(t)) ? 1 : 0,
     q.id,

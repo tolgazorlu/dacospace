@@ -2,7 +2,7 @@ import fs from "node:fs"
 import path from "node:path"
 import matter from "gray-matter"
 import { z } from "zod"
-import { questionsDir } from "./paths"
+import { aiLabDir, questionsDir } from "./paths"
 
 export const LEVELS = ["junior", "mid", "senior"] as const
 export type Level = (typeof LEVELS)[number]
@@ -15,7 +15,11 @@ const Meta = z.object({
   minutes: z.number().int().positive().default(45),
 })
 
+/** Where a question comes from: the core system design bank, or the AI Systems Lab. */
+export type Track = "systems" | "ai"
+
 export type Question = z.infer<typeof Meta> & {
+  track: Track
   prompt: string
   clarifications: string[]
   followUps: string[]
@@ -40,7 +44,7 @@ function bullets(block: string): string[] {
   return items
 }
 
-export function parseQuestion(source: string): Question {
+export function parseQuestion(source: string, track: Track = "systems"): Question {
   const { data, content } = matter(source)
   const meta = Meta.parse(data)
   const parts: Record<string, string> = {}
@@ -53,6 +57,7 @@ export function parseQuestion(source: string): Question {
   if (missing.length) throw new Error(`${meta.id}: missing sections ${missing.join(", ")}`)
   const q: Question = {
     ...meta,
+    track,
     prompt: parts.Prompt,
     clarifications: bullets(parts.Clarifications),
     followUps: bullets(parts["Follow-ups"]),
@@ -65,21 +70,37 @@ export function parseQuestion(source: string): Question {
   return q
 }
 
-export function loadQuestions(): Question[] {
-  const dir = questionsDir()
-  return fs
-    .readdirSync(dir)
-    .filter((f) => f.endsWith(".md") && f !== "README.md")
-    .map((f) => {
-      const q = parseQuestion(fs.readFileSync(path.join(dir, f), "utf8"))
+/** Question folders: the core bank, plus ai-systems-lab/questions when that lab is checked out. */
+export function questionSources(): { dir: string; track: Track }[] {
+  const out: { dir: string; track: Track }[] = [{ dir: questionsDir(), track: "systems" }]
+  const ai = path.join(aiLabDir(), "questions")
+  if (fs.existsSync(ai)) out.push({ dir: ai, track: "ai" })
+  return out
+}
+
+export function loadQuestions(track?: Track): Question[] {
+  const seen = new Set<string>()
+  const out: Question[] = []
+  for (const src of questionSources()) {
+    if (track && src.track !== track) continue
+    for (const f of fs.readdirSync(src.dir).filter((f) => f.endsWith(".md") && f !== "README.md")) {
+      const q = parseQuestion(fs.readFileSync(path.join(src.dir, f), "utf8"), src.track)
       if (`${q.id}.md` !== f) throw new Error(`${f}: id must match file name`)
-      return q
-    })
+      if (seen.has(q.id)) throw new Error(`question id ${q.id} exists in two banks`)
+      seen.add(q.id)
+      out.push(q)
+    }
+  }
+  return out
 }
 
 export function getQuestion(id: string): Question | undefined {
-  const file = path.join(questionsDir(), `${id}.md`)
-  return fs.existsSync(file) ? parseQuestion(fs.readFileSync(file, "utf8")) : undefined
+  if (!/^[a-z0-9-]+$/.test(id)) return undefined
+  for (const src of questionSources()) {
+    const file = path.join(src.dir, `${id}.md`)
+    if (fs.existsSync(file)) return parseQuestion(fs.readFileSync(file, "utf8"), src.track)
+  }
+  return undefined
 }
 
 /** Validates and writes a new question file. Refuses to overwrite. */

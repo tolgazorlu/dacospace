@@ -5,8 +5,8 @@ import { beforeEach, describe, expect, it } from "vitest"
 import { getDay, pickNext, saveAnswer, streak, today, type Day } from "../lib/core/days"
 import { loadQuestions, parseQuestion, type Question } from "../lib/core/questions"
 
-const q = (id: string, level: Question["level"], topics: string[]): Question => ({
-  id, title: id, level, topics, minutes: 45, prompt: "", clarifications: [], followUps: [], rubric: [], pitfalls: [],
+const q = (id: string, level: Question["level"], topics: string[], track: Question["track"] = "systems"): Question => ({
+  id, title: id, level, topics, minutes: 45, track, prompt: "", clarifications: [], followUps: [], rubric: [], pitfalls: [],
 })
 
 describe("question bank", () => {
