@@ -47,6 +47,7 @@ describe("mcp server over stdio", () => {
       "get_interviewer_notes",
       "get_lab_mission",
       "get_lab_state",
+      "get_mission_prompt",
       "get_today",
       "list_questions",
       "save_answer",
@@ -56,6 +57,19 @@ describe("mcp server over stdio", () => {
     const prompts = (await client.listPrompts()).prompts.map((p) => p.name)
     expect(prompts).toContain("mock_interview")
     expect(prompts).toContain("lab_mentor")
+  })
+
+  it("hands out setup and mission prompts that forbid giving the answer", async () => {
+    const raw = async (args: Record<string, unknown>) =>
+      ((await client.callTool({ name: "get_mission_prompt", arguments: args })) as { content: { text: string }[] })
+        .content[0].text
+    const setup = await raw({})
+    expect(setup).toContain("git clone")
+    expect(setup).toContain("pnpm run setup")
+    expect(setup).toMatch(/Do NOT give me the answer/)
+    const mission = await raw({ nn: "02" })
+    expect(mission).toContain("./lab jump 02")
+    expect(mission).toMatch(/Do NOT give me the answer/)
   })
 
   it("runs a full day: question, notes, answer, review, history", async () => {

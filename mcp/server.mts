@@ -14,6 +14,7 @@ import { addQuestion, LEVELS, loadQuestions, type Question } from "../lib/core/q
 import { labDir, questionsDir } from "../lib/core/paths"
 import { currentMission, getLesson, getMission, labAvailable, listResults, readProgress } from "../lib/core/lab"
 import { LAB_VERDICTS, readNotebook, saveLabReview } from "../lib/core/notebook"
+import { missionPrompt, setupPrompt } from "../lib/core/prompts"
 
 const text = (value: unknown) => ({
   content: [{ type: "text" as const, text: typeof value === "string" ? value : JSON.stringify(value, null, 2) }],
@@ -266,11 +267,26 @@ server.registerPrompt(
 3. Pick ONE term from the lesson and ask me to explain it in one sentence of my own. Wait for my answer. A correct but borrowed-sounding answer is not enough: ask me to apply it to a different number.
 4. Judge my check-question answer. If it is wrong, explain the idea again with smaller numbers, do not give the final answer away.
 5. Call save_lab_review: 'pass' only if I could explain it, otherwise 'revisit'. Notes: what the evidence shows, the one gap that matters, one follow-up question.
-6. Never fix code marked LAB: in java-scale-lab for me.`,
+6. Never write the fix for me, in code or in prose. Hint one step at a time (a question, then where to look, then the technique's name). If java-scale-lab/.agents/skills/scale-lab-mentor/SKILL.md is readable, follow it.`,
         },
       },
     ],
   }),
+)
+
+server.registerTool(
+  "get_mission_prompt",
+  {
+    title: "Mission prompt",
+    description:
+      "The copy-paste prompt dacospace shows for a mission (or the setup prompt when nn is omitted): how to get the lab, ./lab jump, and the mentor rules (never give the answer).",
+    inputSchema: { nn: nnArg },
+  },
+  async ({ nn }) => {
+    if (!nn) return text(setupPrompt())
+    const mission = labAvailable() ? getMission(nn) : undefined
+    return text(missionPrompt(nn, mission?.title ?? `mission ${nn}`))
+  },
 )
 
 server.connect(new StdioServerTransport()).catch((err) => {
