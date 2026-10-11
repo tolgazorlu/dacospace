@@ -109,6 +109,14 @@ claude mcp add dacospace -- /path/to/dacospace/node_modules/.bin/tsx /path/to/da
 Any other client: command `/path/to/dacospace/node_modules/.bin/tsx`, args
 `/path/to/dacospace/mcp/server.mts`.
 
+## AI Systems Lab
+
+The **AI** tab reads [ai-systems-lab](https://github.com/tolgazorlu/ai-systems-lab) from a sibling
+folder (`DACOSPACE_AI_LAB_DIR` to override): 23 lessons on enterprise AI systems, incident case
+files with a hypothesis box and Reveal, and senior AI design questions with a hidden rubric. AI
+questions also rotate into the daily Interview, alternating with system design. Progress is stored
+in `data/ai-lab.json`.
+
 ## Working with an AI mentor
 
 The fastest way in: the Today page has a **Set up the lab with your AI** prompt, and every mission

@@ -6,6 +6,8 @@ cd "$(dirname "$0")/.."
 ROOT="$PWD"
 LAB="${DACOSPACE_LAB_DIR:-$(cd .. && pwd)/java-scale-lab}"
 LAB_REPO="${LAB_REPO:-https://github.com/tolgazorlu/java-scale-lab.git}"
+AI_LAB="${DACOSPACE_AI_LAB_DIR:-$(cd .. && pwd)/ai-systems-lab}"
+AI_LAB_REPO="${AI_LAB_REPO:-https://github.com/tolgazorlu/ai-systems-lab.git}"
 
 ok()   { printf '  ok    %s\n' "$*"; }
 miss() { printf '  MISSING  %s\n' "$*"; FAILED=1; }
@@ -32,6 +34,14 @@ if [ -d "$LAB/.git" ]; then ok "found at $LAB"
 else
   echo "  cloning $LAB_REPO into $LAB"
   git clone -q "$LAB_REPO" "$LAB" && ok "cloned" || miss "could not clone $LAB_REPO (do you have access?)"
+fi
+
+echo
+echo "ai-systems-lab"
+if [ -d "$AI_LAB/.git" ]; then ok "found at $AI_LAB"
+else
+  echo "  cloning $AI_LAB_REPO into $AI_LAB"
+  git clone -q "$AI_LAB_REPO" "$AI_LAB" && ok "cloned" || miss "could not clone $AI_LAB_REPO (do you have access?)"
 fi
 
 echo
