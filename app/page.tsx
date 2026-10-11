@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { getDay } from "@/lib/core/days"
+import { aiLabAvailable, getAiLesson, nextAiLesson, readAiProgress, readAiRoadmap } from "@/lib/core/ai-lab"
 import { currentMission, getLesson, getMission, labAvailable, readProgress } from "@/lib/core/lab"
 import { readNotebook } from "@/lib/core/notebook"
 import { setupPrompt } from "@/lib/core/prompts"
@@ -52,6 +53,11 @@ export default function TodayPage() {
   const missionDone = m?.status === "done"
   const lessonRead = Boolean(nb?.lessonReadAt)
   const done = progress?.missions.filter((x) => x.status === "done").length ?? 0
+  const aiRows = aiLabAvailable() ? readAiRoadmap() : []
+  const aiProgress = aiRows.length ? readAiProgress() : null
+  const ai = aiProgress ? nextAiLesson(aiRows, aiProgress) : undefined
+  const aiLesson = ai ? getAiLesson(ai.nn) : undefined
+  const aiRead = aiRows.filter((r) => aiProgress?.lessons[r.nn]).length
 
   return (
     <>
@@ -66,37 +72,44 @@ export default function TodayPage() {
         Read the concept, break it on a real system, then defend a design out loud.
       </p>
       <ol className="mt-8 divide-y">
-        {m && lesson && (
-          <Step
-            n={1}
-            href={`/lesson/${m.nn}`}
-            kind={`Lesson ${m.nn} · ${lesson.meta["reading time"] ?? "10-15 min"}`}
-            title={lesson.title}
-            detail={lesson.meta.concept ?? m.concept}
-            state={lessonRead ? "read" : "start here"}
-            highlight={!lessonRead}
-          />
-        )}
-        {m && (
-          <Step
-            n={lesson ? 2 : 1}
-            href={`/lab/${m.nn}`}
-            kind={`Mission ${m.nn} of ${progress!.missions.length}${mission?.meta.time ? ` · ${mission.meta.time}` : ""}`}
-            title={mission?.title ?? m.title}
-            detail={mission ? m.concept : "Not written yet. Pull java-scale-lab for new missions."}
-            state={missionDone ? "done" : nb?.takeaway || nb?.notes ? "in progress" : `${done} of ${progress!.missions.length} done`}
-            highlight={lessonRead && !missionDone}
-          />
-        )}
-        <Step
-          n={m ? (lesson ? 3 : 2) : 1}
-          href="/interview"
-          kind={`Interview · ${question.level} · ${question.minutes} min`}
-          title={question.title}
-          detail={question.topics.join(", ")}
-          state={day.review ? day.review.verdict : day.answer ? "answered" : "open"}
-          highlight={missionDone && !day.answer}
-        />
+        {[
+          m && lesson && {
+            href: `/lesson/${m.nn}`,
+            kind: `Lesson ${m.nn} · ${lesson.meta["reading time"] ?? "10-15 min"}`,
+            title: lesson.title,
+            detail: lesson.meta.concept ?? m.concept,
+            state: lessonRead ? "read" : "start here",
+            highlight: !lessonRead,
+          },
+          m && {
+            href: `/lab/${m.nn}`,
+            kind: `Mission ${m.nn} of ${progress!.missions.length}${mission?.meta.time ? ` · ${mission.meta.time}` : ""}`,
+            title: mission?.title ?? m.title,
+            detail: mission ? m.concept : "Not written yet. Pull java-scale-lab for new missions.",
+            state: missionDone ? "done" : nb?.takeaway || nb?.notes ? "in progress" : `${done} of ${progress!.missions.length} done`,
+            highlight: lessonRead && !missionDone,
+          },
+          ai && aiLesson && {
+            href: `/ai/${ai.nn}`,
+            kind: `AI lesson ${ai.nn} · ${aiLesson.meta["reading time"] ?? "15-20 min"}`,
+            title: aiLesson.title,
+            detail: ai.concepts,
+            state: aiProgress?.lessons[ai.nn] ? "read" : `${aiRead} of ${aiRows.length} read`,
+            highlight: missionDone && !aiProgress?.lessons[ai.nn],
+          },
+          {
+            href: "/interview",
+            kind: `Interview · ${question.track === "ai" ? "AI · " : ""}${question.level} · ${question.minutes} min`,
+            title: question.title,
+            detail: question.topics.filter((t) => t !== "ai").join(", "),
+            state: day.review ? day.review.verdict : day.answer ? "answered" : "open",
+            highlight: missionDone && !day.answer,
+          },
+        ]
+          .filter((x) => !!x)
+          .map((x, i) => (
+            <Step key={x.href} n={i + 1} {...x} />
+          ))}
       </ol>
       {!lab && (
         <p className="mt-10 text-sm text-muted-foreground">

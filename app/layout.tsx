@@ -29,6 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <nav className="flex items-center gap-4 text-[15px] text-muted-foreground sm:gap-6 sm:text-base">
               {days > 0 && <span className="hidden tabular-nums sm:inline">{days}-day streak</span>}
               <NavLink href="/lab">Lab</NavLink>
+              <NavLink href="/ai">AI</NavLink>
               <NavLink href="/interview">Interview</NavLink>
               <NavLink href="/archive">Archive</NavLink>
               <ThemeToggle />
