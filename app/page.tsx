@@ -2,6 +2,8 @@ import Link from "next/link"
 import { getDay } from "@/lib/core/days"
 import { currentMission, getLesson, getMission, labAvailable, readProgress } from "@/lib/core/lab"
 import { readNotebook } from "@/lib/core/notebook"
+import { setupPrompt } from "@/lib/core/prompts"
+import { PromptCard } from "@/components/prompt-card"
 
 const longDate = () => new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })
 
@@ -53,7 +55,12 @@ export default function TodayPage() {
 
   return (
     <>
-      <p className="text-sm text-muted-foreground">{longDate()}</p>
+      <PromptCard
+        title="Set up the lab with your AI"
+        description="Paste into Claude Code, Codex, Cursor or any coding assistant. It clones both repos, installs, connects MCP, and mentors you without giving away answers."
+        prompt={setupPrompt()}
+      />
+      <p className="mt-12 text-sm text-muted-foreground">{longDate()}</p>
       <h1 className="mt-2 text-3xl font-semibold tracking-tight">Today</h1>
       <p className="mt-2 text-sm text-muted-foreground">
         Read the concept, break it on a real system, then defend a design out loud.

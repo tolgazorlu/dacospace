@@ -10,6 +10,8 @@ import { Notebook } from "@/components/lab/notebook"
 import { ResultsTable } from "@/components/lab/results-table"
 import { getLesson, getMission, labAvailable, listResults, listScenarios, readProgress, section, withoutSections } from "@/lib/core/lab"
 import { readNotebook } from "@/lib/core/notebook"
+import { missionPrompt } from "@/lib/core/prompts"
+import { PromptCard } from "@/components/prompt-card"
 import { labEnv } from "@/lib/server/lab-env"
 import Markdown from "react-markdown"
 
@@ -86,6 +88,14 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
             </p>
           )}
 
+          <div className="mt-8">
+            <PromptCard
+              title={`Do mission ${nn} with your AI`}
+              description={`Gets the lab if you do not have it, offers a fresh start at mission ${nn} (earlier missions solved), then mentors you without giving the answer.`}
+              prompt={missionPrompt(nn, mission.title)}
+            />
+          </div>
+
           <div className="mt-10">
             <LabMarkdown source={withoutSections(mission.body, NOTEBOOK_SECTIONS)} scenarios={listScenarios()} />
           </div>
@@ -118,8 +128,8 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
           )}
           {!notebook.review && (
             <p className="mt-12 text-sm text-muted-foreground">
-              Want feedback? In your AI client, run the <code>lab_mentor</code> prompt from the dacospace MCP server. Its
-              review shows up here.
+              Want feedback? Copy the prompt at the top of this mission into your AI assistant, or run the{" "}
+              <code>lab_mentor</code> prompt if dacospace is connected over MCP. A saved review shows up here.
             </p>
           )}
 
