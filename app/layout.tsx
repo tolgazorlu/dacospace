@@ -22,19 +22,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="min-h-full">
         <Shell>
-          <header className="flex items-center justify-between py-8">
-            <Link href="/" className="font-semibold tracking-tight">
+          <header className="flex items-center justify-between gap-6 border-b py-6">
+            <Link href="/" className="text-lg font-semibold tracking-tight">
               dacospace
             </Link>
-            <nav className="flex items-center gap-5 text-sm text-muted-foreground">
-              {days > 0 && <span className="tabular-nums">{days}-day streak</span>}
+            <nav className="flex items-center gap-4 text-[15px] text-muted-foreground sm:gap-6 sm:text-base">
+              {days > 0 && <span className="hidden tabular-nums sm:inline">{days}-day streak</span>}
               <NavLink href="/lab">Lab</NavLink>
               <NavLink href="/interview">Interview</NavLink>
               <NavLink href="/archive">Archive</NavLink>
               <ThemeToggle />
             </nav>
           </header>
-          <main className="pt-6">{children}</main>
+          <main className="pt-12">{children}</main>
         </Shell>
       </body>
     </html>

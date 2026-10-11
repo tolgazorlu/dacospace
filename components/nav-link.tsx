@@ -11,7 +11,7 @@ export function NavLink({ href, children }: { href: string; children: React.Reac
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={active ? "text-foreground underline decoration-1 underline-offset-[6px]" : "hover:text-foreground"}
+      className={active ? "text-foreground underline decoration-1 underline-offset-8" : "hover:text-foreground"}
     >
       {children}
     </Link>
