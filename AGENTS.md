@@ -10,9 +10,20 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## dacospace
 
-Daily system design interview questions: Next.js web app + stdio MCP server
-sharing `lib/core/`. Questions are markdown in `questions/` (format in
-`questions/README.md`), personal data in `data/` (gitignored).
+Daily learning loop: lesson -> lab -> interview. Next.js web app + stdio MCP
+server sharing `lib/core/`. Interview questions are markdown in `questions/`
+(format in `questions/README.md`), personal data in `data/` (gitignored).
+
+The lab content and CLI live in `~/projects/java-scale-lab` (`DACOSPACE_LAB_DIR`).
+dacospace parses its `PROGRESS.md` table and the `# Mission NN · Title` /
+`# Lesson NN · Title` headings; keep both repos' formats in sync.
+
+- `lib/server/` spawns `./lab`. Every new subcommand must be added to the
+  allowlist in `lib/core/lab-commands.ts` with a test; never run through a shell.
+- Child processes get `childEnv()`: Next.js sets `PORT=4120`, which a spawned
+  Spring app would otherwise take over.
+- The server binds 127.0.0.1 and `lib/server/guard.ts` checks Host/Origin and the
+  `x-dacospace` header. Keep both.
 
 - Verify: `pnpm test && pnpm lint && pnpm typecheck && pnpm build`.
 - Factory protocol: `~/projects/cortex/playbooks/factory.md`, project note

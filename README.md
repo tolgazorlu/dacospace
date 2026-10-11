@@ -1,16 +1,39 @@
 # dacospace
 
-One system design interview question a day, and an AI interviewer to
-work through it with.
+A daily learning loop for backend and system design:
 
-The 2024 dacospace tried to teach everything at once. This version does one
-thing: every morning it hands you a realistic 45-minute interview question,
-holds back the details until you ask for them, and only shows the
-follow-ups and the rubric after you commit to an answer.
+1. **Lesson**: a 10-15 minute reading on one concept.
+2. **Lab**: break that concept on a real system and measure it. The lab is
+   [java-scale-lab](https://github.com/tolgazorlu/java-scale-lab), a deliberately naive Java ordering
+   service with load tests, chaos and Grafana. dacospace runs its `./lab` commands with live output,
+   embeds the Grafana panels, and keeps your notebook.
+3. **Interview**: one realistic system design interview question, with an AI interviewer.
 
-## How a day works
+The 2024 dacospace tried to teach everything at once. This version shows one step at a time: the
+lesson before the lab, the clarifications only when you ask, the rubric only after you answer.
 
-1. Open the app. Today's question is picked for you: unseen questions
+## The lab
+
+`/lab` lists the 23 missions; `/lab/NN` is the workspace:
+
+- the mission text, where every `./lab ...` line in a code block gets a **Run** button,
+- the environment (Docker services, the Spring app on :4180 with Start/Stop and its log),
+- a console that streams the command output (one command at a time; Stop kills the whole process group),
+- live Grafana panels and the latest k6 results with the change against the previous run,
+- the notebook: evidence table, check question, your one-sentence takeaway. **Complete mission**
+  runs `./lab done NN "..."`, so `PROGRESS.md` in java-scale-lab stays the source of truth.
+
+Content (lessons, missions, roadmap) lives in java-scale-lab, not here. dacospace looks for it in
+`~/projects/java-scale-lab`; set `DACOSPACE_LAB_DIR` to use another checkout.
+
+Because the app runs commands on your machine, it listens on 127.0.0.1 only, and its API refuses
+requests whose Host or Origin is not localhost or that lack the `x-dacospace` header. Only an
+allowlist of `./lab` subcommands can run (`up`, `down`, `seed`, `test`, `status`, `load`, `race`,
+`compare`, `topsql`, `sql`, `explain`, `chaos payment`), always as an argv array, never through a shell.
+
+## How an interview day works
+
+1. Open `/interview`. Today's question is picked for you: unseen questions
    first, junior before mid before senior, never the same topic two days in
    a row.
 2. Ask the interviewer. Each click reveals one clarification, the way a real
@@ -46,8 +69,11 @@ web app.
 | `get_history` | Past days and verdicts |
 | `list_questions` | The bank, filterable by level or topic |
 | `add_question` | Add a validated question to `questions/` |
+| `get_lab_state` | Current lab mission, notebook, latest load test results |
+| `get_lab_mission` | Lesson and mission markdown for a mission |
+| `save_lab_review` | Store mentor feedback (`pass` / `revisit`) shown under the notebook |
 
-Prompt: `mock_interview` runs the whole interview.
+Prompts: `mock_interview` runs the whole interview; `lab_mentor` reviews a lab mission.
 
 Hermes:
 
