@@ -11,7 +11,9 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod"
 import { getDay, listDays, saveAnswer, saveReview, streak, today, VERDICTS } from "../lib/core/days"
 import { addQuestion, LEVELS, loadQuestions, type Question } from "../lib/core/questions"
-import { questionsDir } from "../lib/core/paths"
+import { labDir, questionsDir } from "../lib/core/paths"
+import { currentMission, getLesson, getMission, labAvailable, listResults, readProgress } from "../lib/core/lab"
+import { LAB_VERDICTS, readNotebook, saveLabReview } from "../lib/core/notebook"
 
 const text = (value: unknown) => ({
   content: [{ type: "text" as const, text: typeof value === "string" ? value : JSON.stringify(value, null, 2) }],
@@ -173,6 +175,98 @@ server.registerPrompt(
 3. Once I have a high-level design, ask the follow-ups one at a time.
 4. When I am done, call save_answer with my design in my own words, judge it against the rubric, and call save_review.
 5. Then teach me the single most important gap in under 40 lines and ask one check question.`,
+        },
+      },
+    ],
+  }),
+)
+
+// ---------- Scale Lab (java-scale-lab) ----------
+
+const nnArg = z.string().regex(/^\d{2}$/).optional().describe("Mission number like 03. Defaults to the current mission.")
+
+const requireLab = () => {
+  if (!labAvailable()) throw new Error(`no java-scale-lab checkout at ${labDir()} (set DACOSPACE_LAB_DIR)`)
+}
+
+const missionState = (nn?: string) => {
+  requireLab()
+  const { missions, log } = readProgress()
+  const row = nn ? missions.find((m) => m.nn === nn) : currentMission(missions)
+  if (!row) throw new Error(`mission ${nn} is not in PROGRESS.md`)
+  return { row, log: log.filter((l) => l.nn === row.nn), missions }
+}
+
+server.registerTool(
+  "get_lab_state",
+  {
+    title: "Scale Lab state",
+    description:
+      "The learner's Java scale lab: current (or given) mission row, lesson read or not, their notebook (evidence notes, check-question answer, one-sentence takeaway), the mentor review if any, and the latest load test results. Use it before reviewing a mission or planning the next one.",
+    inputSchema: { nn: nnArg },
+  },
+  async ({ nn }) => {
+    const { row, log, missions } = missionState(nn)
+    return text({
+      mission: row,
+      done: missions.filter((m) => m.status === "done").length,
+      total: missions.length,
+      notebook: readNotebook(row.nn),
+      progressLog: log,
+      recentResults: listResults(8),
+    })
+  },
+)
+
+server.registerTool(
+  "get_lab_mission",
+  {
+    title: "Scale Lab mission text",
+    description:
+      "Full markdown of a mission's lesson (the concept) and mission (the hands-on steps), as the learner sees them. The mission contains a check question; judge the learner's answer against the lesson.",
+    inputSchema: { nn: nnArg },
+  },
+  async ({ nn }) => {
+    const { row } = missionState(nn)
+    return text({ nn: row.nn, lesson: getLesson(row.nn) ?? null, mission: getMission(row.nn) ?? null })
+  },
+)
+
+server.registerTool(
+  "save_lab_review",
+  {
+    title: "Save Scale Lab review",
+    description:
+      "Store mentor feedback for a mission, shown under the learner's notebook. verdict 'pass' only when they can explain the concept in their own words, not just when the numbers are right; otherwise 'revisit'. Notes in markdown: what the evidence shows, the one gap that matters most, one follow-up question.",
+    inputSchema: { verdict: z.enum(LAB_VERDICTS), notes: z.string().min(1).describe("Markdown"), nn: nnArg },
+  },
+  async ({ verdict, notes, nn }) => {
+    const { row } = missionState(nn)
+    return text(saveLabReview(row.nn, { verdict, notes }))
+  },
+)
+
+server.registerPrompt(
+  "lab_mentor",
+  {
+    title: "Scale Lab mentor",
+    description: "Review today's (or a given) Scale Lab mission like a senior engineer pairing with you.",
+    argsSchema: { nn: nnArg },
+  },
+  ({ nn }) => ({
+    messages: [
+      {
+        role: "user",
+        content: {
+          type: "text",
+          text: `Be my mentor for Scale Lab mission ${nn ?? "(the current one)"}.
+
+1. Call get_lab_state and get_lab_mission. Do not repeat the lesson to me.
+2. Look at my notebook and the latest results. Say what the numbers actually show, in two or three lines. If a claim in my notes has no result behind it, say so.
+3. Pick ONE term from the lesson and ask me to explain it in one sentence of my own. Wait for my answer. A correct but borrowed-sounding answer is not enough: ask me to apply it to a different number.
+4. Judge my check-question answer. If it is wrong, explain the idea again with smaller numbers, do not give the final answer away.
+5. Call save_lab_review: 'pass' only if I could explain it, otherwise 'revisit'. Notes: what the evidence shows, the one gap that matters, one follow-up question.
+6. Never fix code marked LAB: in java-scale-lab for me.`,
         },
       },
     ],
