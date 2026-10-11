@@ -111,6 +111,12 @@ Any other client: command `/path/to/dacospace/node_modules/.bin/tsx`, args
 
 ## Working with an AI mentor
 
+The fastest way in: the Today page has a **Set up the lab with your AI** prompt, and every mission
+page has a **Do mission NN with your AI** prompt. Copy, paste into Claude Code, Codex, Cursor or any
+coding assistant. The prompts clone what is missing, offer `./lab jump NN` for a fresh start at that
+mission, and tell the assistant to mentor, not solve. The MCP tool `get_mission_prompt` returns the
+same text.
+
 Once the MCP server is connected, your AI client can read your lab notebook and results and
 leave a review under the notebook. Ask it in plain words, for example:
 
