@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 // Panel ids from java-scale-lab infra/observability/dashboards/scale-lab.json
 const VIEWS = {
@@ -13,9 +13,32 @@ const VIEWS = {
 
 type View = keyof typeof VIEWS
 
+/** Why a panel can say "No data", in the order you hit them. */
+function hint(app: string | null, view: View): string | null {
+  if (app === "down") return "The app is stopped, so Prometheus has nothing to scrape. Start it in Environment above."
+  if (app === "starting") return "The app is starting. Metrics appear about 10 seconds after it is up."
+  if (app === "up" && (view === "Latency" || view === "Load" || view === "Payments"))
+    return "These panels need traffic. Run a load test from the mission; they fill within ~10 seconds."
+  return null
+}
+
 export function LivePanels({ grafanaUp }: { grafanaUp: boolean }) {
   const [view, setView] = useState<View>("Latency")
   const [range, setRange] = useState("10m")
+  const [app, setApp] = useState<string | null>(null)
+  useEffect(() => {
+    const poll = async () => {
+      const res = await fetch("/api/lab/env", { cache: "no-store" }).catch(() => null)
+      if (res?.ok) setApp((await res.json()).app)
+    }
+    const first = setTimeout(poll, 0)
+    const t = setInterval(poll, 5000)
+    return () => {
+      clearTimeout(first)
+      clearInterval(t)
+    }
+  }, [])
+  const note = hint(app, view)
   return (
     <section aria-label="Live metrics">
       <div className="flex items-baseline justify-between gap-3">
@@ -46,6 +69,7 @@ export function LivePanels({ grafanaUp }: { grafanaUp: boolean }) {
           </button>
         ))}
       </div>
+      {grafanaUp && note && <p className="mt-3 text-xs text-muted-foreground">{note}</p>}
       {grafanaUp ? (
         <div className="mt-3 space-y-2">
           {VIEWS[view].map((id) => (
