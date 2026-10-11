@@ -1,6 +1,9 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { streak } from "@/lib/core/days"
+import { NavLink } from "@/components/nav-link"
+import { Shell } from "@/components/shell"
+import { THEME_SCRIPT, ThemeToggle } from "@/components/theme-toggle"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -13,28 +16,26 @@ export const dynamic = "force-dynamic"
 export default function RootLayout({ children }: LayoutProps<"/">) {
   const days = streak()
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang="en" className="dark h-full antialiased" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className="min-h-full">
-        <div className="mx-auto max-w-2xl px-5 pb-24">
-          <header className="flex items-baseline justify-between py-8">
+        <Shell>
+          <header className="flex items-center justify-between py-8">
             <Link href="/" className="font-semibold tracking-tight">
               dacospace
             </Link>
-            <nav className="flex items-baseline gap-5 text-sm text-muted-foreground">
+            <nav className="flex items-center gap-5 text-sm text-muted-foreground">
               {days > 0 && <span className="tabular-nums">{days}-day streak</span>}
-              <Link href="/lab" className="hover:text-foreground">
-                Lab
-              </Link>
-              <Link href="/interview" className="hover:text-foreground">
-                Interview
-              </Link>
-              <Link href="/archive" className="hover:text-foreground">
-                Archive
-              </Link>
+              <NavLink href="/lab">Lab</NavLink>
+              <NavLink href="/interview">Interview</NavLink>
+              <NavLink href="/archive">Archive</NavLink>
+              <ThemeToggle />
             </nav>
           </header>
           <main className="pt-6">{children}</main>
-        </div>
+        </Shell>
       </body>
     </html>
   )
