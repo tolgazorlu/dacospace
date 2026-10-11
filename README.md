@@ -12,6 +12,24 @@ A daily learning loop for backend and system design:
 The 2024 dacospace tried to teach everything at once. This version shows one step at a time: the
 lesson before the lab, the clarifications only when you ask, the rubric only after you answer.
 
+## Quick start
+
+You need: Docker Desktop (running), Java 25 ([SDKMAN](https://sdkman.io): `sdk install java 25-amzn`),
+Node 20+ with pnpm, git, python3. Both repos are private: ask for an invite first.
+
+```sh
+git clone https://github.com/tolgazorlu/dacospace.git
+cd dacospace
+pnpm run setup        # checks tools, clones java-scale-lab next to this folder, starts the lab infrastructure
+pnpm build && pnpm start
+```
+
+Open http://localhost:4120. The Today page shows the lesson, the lab mission and the interview
+question for the day. In the lab, press **Start** next to the app, then run `./lab seed` once from
+mission 01.
+
+Theme: dark by default, the sun/moon button switches. Everything is black and white on purpose.
+
 ## The lab
 
 `/lab` lists the 23 missions; `/lab/NN` is the workspace:
@@ -23,8 +41,9 @@ lesson before the lab, the clarifications only when you ask, the rubric only aft
 - the notebook: evidence table, check question, your one-sentence takeaway. **Complete mission**
   runs `./lab done NN "..."`, so `PROGRESS.md` in java-scale-lab stays the source of truth.
 
-Content (lessons, missions, roadmap) lives in java-scale-lab, not here. dacospace looks for it in
-`~/projects/java-scale-lab`; set `DACOSPACE_LAB_DIR` to use another checkout.
+Content (lessons, missions, roadmap) lives in java-scale-lab, not here. dacospace looks for it in a
+sibling folder (`../java-scale-lab`); set `DACOSPACE_LAB_DIR` to use another checkout. New missions
+arrive with `git pull` in java-scale-lab.
 
 Because the app runs commands on your machine, it listens on 127.0.0.1 only, and its API refuses
 requests whose Host or Origin is not localhost or that lack the `x-dacospace` header. Only an
@@ -89,6 +108,17 @@ claude mcp add dacospace -- /path/to/dacospace/node_modules/.bin/tsx /path/to/da
 
 Any other client: command `/path/to/dacospace/node_modules/.bin/tsx`, args
 `/path/to/dacospace/mcp/server.mts`.
+
+## Working with an AI mentor
+
+Once the MCP server is connected, your AI client can read your lab notebook and results and
+leave a review under the notebook. Ask it in plain words, for example:
+
+> Be my Scale Lab mentor for mission 02. Use the dacospace tools: read my state and the mission,
+> tell me what my numbers show, quiz me on one term, then save a review.
+
+Clients that support MCP prompts can run `lab_mentor` instead, which carries the same instructions.
+The mentor never fixes the lab code for you: the fix is the exercise.
 
 ## Questions
 

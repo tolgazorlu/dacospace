@@ -26,5 +26,5 @@ dacospace parses its `PROGRESS.md` table and the `# Mission NN · Title` /
   `x-dacospace` header. Keep both.
 
 - Verify: `pnpm test && pnpm lint && pnpm typecheck && pnpm build`.
-- Factory protocol: `~/projects/cortex/playbooks/factory.md`, project note
-  `~/projects/cortex/projects/dacospace.md`.
+- Maintainer notes (only if present on this machine): `~/projects/cortex/playbooks/factory.md`
+  and `~/projects/cortex/projects/dacospace.md`.
