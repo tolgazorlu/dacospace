@@ -79,7 +79,7 @@ export function LivePanels({ grafanaUp }: { grafanaUp: boolean }) {
               key={`${id}-${range}-${theme}`}
               title={`Grafana panel ${id}`}
               src={`http://localhost:4182/d-solo/scale-lab/scale-lab?orgId=1&panelId=${id}&from=now-${range}&to=now&refresh=5s&theme=${theme}&hideLogo=true`}
-              className="h-64 w-full rounded-md border bg-background"
+              className="h-64 w-full rounded-md border bg-background grayscale"
               loading="lazy"
             />
           ))}
