@@ -5,7 +5,7 @@ import "./globals.css"
 
 export const metadata: Metadata = {
   title: "dacospace",
-  description: "One system design interview question a day.",
+  description: "A daily lesson, a hands-on scale lab and a system design interview question.",
 }
 
 export const dynamic = "force-dynamic"
@@ -22,6 +22,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </Link>
             <nav className="flex items-baseline gap-5 text-sm text-muted-foreground">
               {days > 0 && <span className="tabular-nums">{days}-day streak</span>}
+              <Link href="/lab" className="hover:text-foreground">
+                Lab
+              </Link>
+              <Link href="/interview" className="hover:text-foreground">
+                Interview
+              </Link>
               <Link href="/archive" className="hover:text-foreground">
                 Archive
               </Link>
