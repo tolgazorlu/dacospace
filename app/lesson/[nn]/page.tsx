@@ -28,7 +28,7 @@ export default async function LessonPage({ params }: PageProps<"/lesson/[nn]">) 
       </div>
       <div className="mt-14 flex flex-wrap items-center gap-4 border-t pt-8">
         {read ? (
-          <Link href={`/lab/${nn}`} className="text-sm text-primary hover:underline">
+          <Link href={`/lab/${nn}`} className="text-sm font-medium underline underline-offset-4">
             Go to mission {nn}{mission ? `: ${mission.title}` : ""} →
           </Link>
         ) : (

@@ -83,7 +83,7 @@ export function Notebook({
             Complete mission
           </Button>
         )}
-        {msg && <span className={`text-sm ${msg.error ? "text-destructive" : "text-muted-foreground"}`}>{msg.text}</span>}
+        {msg && <span role={msg.error ? "alert" : "status"} className={`text-sm ${msg.error ? "font-medium text-foreground" : "text-muted-foreground"}`}>{msg.text}</span>}
       </div>
     </div>
   )

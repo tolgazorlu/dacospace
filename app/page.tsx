@@ -33,7 +33,7 @@ function Step({
           </span>
           <span className="mt-1 block text-sm text-muted-foreground">{detail}</span>
         </span>
-        <span className={`shrink-0 text-sm ${highlight ? "text-primary" : "text-muted-foreground"}`}>{state}</span>
+        <span className={`shrink-0 text-sm ${highlight ? "font-medium text-foreground" : "text-muted-foreground"}`}>{state}</span>
       </Link>
     </li>
   )
@@ -76,7 +76,7 @@ export default function TodayPage() {
             href={`/lab/${m.nn}`}
             kind={`Mission ${m.nn} of ${progress!.missions.length}${mission?.meta.time ? ` · ${mission.meta.time}` : ""}`}
             title={mission?.title ?? m.title}
-            detail={mission ? m.concept : "Not written yet. Ask Hermes: scale lab: write the next mission"}
+            detail={mission ? m.concept : "Not written yet. Pull java-scale-lab for new missions."}
             state={missionDone ? "done" : nb?.takeaway || nb?.notes ? "in progress" : `${done} of ${progress!.missions.length} done`}
             highlight={lessonRead && !missionDone}
           />

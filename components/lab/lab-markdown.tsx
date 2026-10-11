@@ -21,7 +21,7 @@ function RunnableLine({ line, scenarios }: { line: string; scenarios: string[] }
         type="button"
         onClick={() => run(line)}
         disabled={busy}
-        className="inline-flex items-center gap-1 rounded-sm px-1.5 py-0.5 font-sans text-xs text-primary hover:underline disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline"
+        className="inline-flex shrink-0 items-center gap-1 rounded-sm px-1.5 py-0.5 font-sans text-xs font-medium text-foreground underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:font-normal disabled:text-muted-foreground disabled:no-underline"
         aria-label={`Run ${line}`}
       >
         <Play className="size-3" aria-hidden /> Run

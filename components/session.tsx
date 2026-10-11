@@ -29,7 +29,7 @@ function Timer({ minutes }: { minutes: number }) {
     <div className="flex items-center gap-3">
       <span
         aria-live="off"
-        className={`font-mono text-sm tabular-nums ${left <= 0 ? "text-destructive" : left < 300 ? "text-accent-ink" : "text-muted-foreground"}`}
+        className={`font-mono text-sm tabular-nums ${left <= 0 ? "font-semibold text-foreground" : left < 300 ? "font-medium text-foreground" : "text-muted-foreground"}`}
       >
         {left <= 0 ? "Time is up" : `${mm}:${ss}`}
       </span>
@@ -77,7 +77,7 @@ export function Session({ day, question }: { day: Day; question: Question }) {
       <Section title="Ask the interviewer">
         {clarifications.length > 0 && <Bullets items={clarifications} />}
         {left > 0 && (
-          <Button variant="ghost" size="sm" className="-ml-2.5 mt-2 text-primary hover:text-primary" onClick={() => setAsked((n) => n + 1)}>
+          <Button variant="ghost" size="sm" className="-ml-2.5 mt-2" onClick={() => setAsked((n) => n + 1)}>
             Ask a clarifying question <span className="text-muted-foreground tabular-nums">({left} left)</span>
           </Button>
         )}
@@ -110,7 +110,7 @@ export function Session({ day, question }: { day: Day; question: Question }) {
             >
               {pending ? "Saving" : answered ? "Update answer" : "Submit answer"}
             </Button>
-            {error && <span className="text-sm text-destructive">{error}</span>}
+            {error && <span role="alert" className="text-sm font-medium">{error}</span>}
             {!error && answered && !dirty && <span className="text-sm text-muted-foreground">Saved</span>}
           </div>
         )}

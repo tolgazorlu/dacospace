@@ -25,7 +25,7 @@ export function Console() {
       <div className="flex items-baseline justify-between gap-3">
         <h2 className="text-sm font-semibold">Console</h2>
         {busy && (
-          <Button size="xs" variant="ghost" className="text-destructive" onClick={stop}>
+          <Button size="xs" variant="outline" onClick={stop}>
             Stop
           </Button>
         )}
@@ -39,7 +39,7 @@ export function Console() {
           <p className="mt-2 flex items-baseline gap-2 font-mono text-xs">
             <span className="truncate">{active.label}</span>
             <span
-              className={`ml-auto shrink-0 ${active.state === "failed" ? "text-destructive" : "text-muted-foreground"}`}
+              className={`ml-auto shrink-0 ${active.state === "failed" ? "font-semibold text-foreground" : "text-muted-foreground"}`}
             >
               {running ? `running · ${elapsed}s` : `exit ${active.exit}`}
             </span>

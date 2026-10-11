@@ -51,7 +51,7 @@ export function ResultsTable({ results }: { results: RunResult[] }) {
                     </span>
                   )}
                 </td>
-                <td className={`py-1.5 pr-3 text-right ${r.failedPct >= 1 ? "text-destructive" : ""}`}>{r.failedPct.toFixed(1)}%</td>
+                <td className={`py-1.5 pr-3 text-right ${r.failedPct >= 1 ? "font-semibold" : "text-muted-foreground"}`}>{r.failedPct.toFixed(1)}%</td>
                 <td className="py-1.5 text-right">{r.dropped || "–"}</td>
               </tr>
             )

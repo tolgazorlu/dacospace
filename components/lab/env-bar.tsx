@@ -18,7 +18,7 @@ function Dot({ on, warn }: { on: boolean; warn?: boolean }) {
   return (
     <span
       aria-hidden
-      className={`inline-block size-1.5 rounded-full ${warn ? "bg-accent-ink" : on ? "bg-foreground" : "border border-muted-foreground"}`}
+      className={`inline-block size-1.5 shrink-0 rounded-full ${warn ? "animate-pulse bg-muted-foreground" : on ? "bg-foreground" : "border border-muted-foreground"}`}
     />
   )
 }
