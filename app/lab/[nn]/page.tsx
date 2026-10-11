@@ -42,9 +42,17 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
         <p className="text-sm text-muted-foreground">Mission {nn} · {row.concept}</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance">{row.title}</h1>
         <p className="mt-8 text-muted-foreground">
-          This mission is on the roadmap but not written yet. Missions are written one at a time, from numbers measured on
-          your machine. Ask Hermes: <code>scale lab: write mission {nn}</code>
+          This mission is on the roadmap but not written yet. Missions ship one at a time, after they have been measured on a
+          real machine. Run <code>git pull</code> in java-scale-lab to get new ones. Meanwhile, the lesson for it may
+          already be there.
         </p>
+        {lesson && (
+          <p className="mt-6">
+            <Link href={`/lesson/${nn}`} className="font-medium underline underline-offset-4">
+              Read lesson {nn}: {lesson.title}
+            </Link>
+          </p>
+        )}
       </article>
     )
   }
@@ -55,7 +63,7 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
 
   return (
     <ConsoleProvider>
-      <div className="relative left-1/2 w-[min(76rem,calc(100vw-2.5rem))] -translate-x-1/2 lg:grid lg:grid-cols-[minmax(0,1fr)_27rem] lg:gap-14">
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_25rem] lg:gap-14">
         <article className="min-w-0">
           <p className="text-sm text-muted-foreground">
             Mission {nn}
@@ -71,7 +79,7 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
                   Reread lesson {nn}: {lesson.title}
                 </Link>
               ) : (
-                <Link href={`/lesson/${nn}`} className="text-primary hover:underline">
+                <Link href={`/lesson/${nn}`} className="font-medium underline underline-offset-4">
                   Read lesson {nn} first: {lesson.title} ({lesson.meta["reading time"] ?? "10-15 min"})
                 </Link>
               )}
