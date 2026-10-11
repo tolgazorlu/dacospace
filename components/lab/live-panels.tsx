@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useTheme } from "@/components/theme-toggle"
 
 // Panel ids from java-scale-lab infra/observability/dashboards/scale-lab.json
 const VIEWS = {
@@ -39,6 +40,7 @@ export function LivePanels({ grafanaUp }: { grafanaUp: boolean }) {
     }
   }, [])
   const note = hint(app, view)
+  const theme = useTheme()
   return (
     <section aria-label="Live metrics">
       <div className="flex items-baseline justify-between gap-3">
@@ -74,9 +76,9 @@ export function LivePanels({ grafanaUp }: { grafanaUp: boolean }) {
         <div className="mt-3 space-y-2">
           {VIEWS[view].map((id) => (
             <iframe
-              key={`${id}-${range}`}
+              key={`${id}-${range}-${theme}`}
               title={`Grafana panel ${id}`}
-              src={`http://localhost:4182/d-solo/scale-lab/scale-lab?orgId=1&panelId=${id}&from=now-${range}&to=now&refresh=5s&theme=light`}
+              src={`http://localhost:4182/d-solo/scale-lab/scale-lab?orgId=1&panelId=${id}&from=now-${range}&to=now&refresh=5s&theme=${theme}&hideLogo=true`}
               className="h-64 w-full rounded-md border bg-background"
               loading="lazy"
             />
