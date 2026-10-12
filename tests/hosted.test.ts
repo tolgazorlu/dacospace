@@ -3,7 +3,7 @@ import os from "node:os"
 import path from "node:path"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { aiLabAvailable, readAiProgress } from "../lib/core/ai-lab"
-import { dayView, hostedDay, rotation } from "../lib/core/days"
+import { HOSTED_START, dayView, hostedDay, rotation } from "../lib/core/days"
 import { labAvailable, readProgress } from "../lib/core/lab"
 import { readNotebook } from "../lib/core/notebook"
 import { completeMission, labEnv, startApp, stopApp } from "../lib/server/lab-env"
@@ -31,8 +31,11 @@ describe("hosted mode", () => {
   })
 
   it("gives every visitor the same question for a date and writes nothing", () => {
-    expect(dayView("2026-10-12").question.id).toBe(hostedDay("2026-10-12").question.id)
-    expect(hostedDay("2026-10-12").question.id).not.toBe(hostedDay("2026-10-13").question.id)
+    expect(dayView("2026-10-14").question.id).toBe(hostedDay("2026-10-14").question.id)
+    const order = rotation(loadQuestions())
+    expect(hostedDay(HOSTED_START).question.id).toBe(order[0].id)
+    expect(hostedDay("2026-10-12").question.id).toBe(order[0].id) // before the start: still day 1
+    expect(hostedDay("2026-10-14").question.id).toBe(order[1].id)
     expect(fs.readdirSync(data)).toEqual([])
     expect(() => hostedDay("../etc")).toThrow(/bad date/)
   })
