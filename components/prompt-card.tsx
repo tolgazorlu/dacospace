@@ -2,6 +2,7 @@
 
 import { Check, ChevronDown, Copy } from "lucide-react"
 import { useState } from "react"
+import { useT } from "@/components/i18n"
 
 /**
  * A prompt the learner pastes into their AI assistant. Collapsed by default so it does not push the
@@ -10,6 +11,7 @@ import { useState } from "react"
 export function PromptCard({ title, description, prompt }: { title: string; description: string; prompt: string }) {
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
+  const t = useT()
 
   const copy = async () => {
     try {
@@ -40,7 +42,7 @@ export function PromptCard({ title, description, prompt }: { title: string; desc
           aria-live="polite"
         >
           {copied ? <Check className="size-3.5" aria-hidden /> : <Copy className="size-3.5" aria-hidden />}
-          {copied ? "Copied" : "Copy prompt"}
+          {copied ? t.common.copied : t.common.copyPrompt}
         </button>
       </div>
       <button
@@ -50,7 +52,7 @@ export function PromptCard({ title, description, prompt }: { title: string; desc
         className="flex w-full items-center gap-1.5 border-t px-4 py-2 text-left text-xs text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
       >
         <ChevronDown className={`size-3.5 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden />
-        {open ? "Hide the prompt" : "Show the prompt"}
+        {open ? t.common.hidePrompt : t.common.showPrompt}
       </button>
       {open && (
         <pre className="max-h-96 overflow-auto border-t px-4 py-3 font-mono text-xs leading-relaxed whitespace-pre-wrap text-muted-foreground">
