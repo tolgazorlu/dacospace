@@ -1,6 +1,12 @@
 {
   "name": "dacospace",
   "version": "0.1.0",
+  "description": "Daily learning loop for backend engineers: a lesson, a hands-on lab and a system design interview question per day. Next.js app plus a stdio MCP server.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tolgazorlu/dacospace.git"
+  },
   "private": true,
   "scripts": {
     "dev": "next dev -p 4120 -H 127.0.0.1",
