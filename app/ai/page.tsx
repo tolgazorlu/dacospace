@@ -2,6 +2,7 @@ import Link from "next/link"
 import { AiMissing } from "@/components/ai/ai-missing"
 import { aiLabAvailable, listCases, nextAiLesson, readAiProgress, readAiRoadmap } from "@/lib/core/ai-lab"
 import { loadQuestions } from "@/lib/core/questions"
+import { isHosted } from "@/lib/core/hosted"
 
 function Row({ href, lead, title, detail, state, strong }: { href: string; lead: string; title: string; detail: string; state: string; strong?: boolean }) {
   return (
@@ -26,6 +27,7 @@ export default function AiLabPage() {
   const cases = listCases()
   const questions = loadQuestions("ai")
   const read = rows.filter((r) => progress.lessons[r.nn]).length
+  const hosted = isHosted()
   const reviewed = cases.filter((c) => progress.cases[c.slug]?.revealedAt).length
   const modules = [...new Set(rows.map((r) => r.module))]
   const categories = [...new Set(cases.map((c) => c.category))]
@@ -34,8 +36,10 @@ export default function AiLabPage() {
     <>
       <h1 className="text-3xl font-semibold tracking-tight">AI Systems Lab</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        Design, break and defend enterprise AI systems: agents, RAG, evals, security, operations. {read} of {rows.length}{" "}
-        lessons read · {reviewed} of {cases.length} incidents reviewed · {questions.length} design questions.
+        Design, break and defend enterprise AI systems: agents, RAG, evals, security, operations.{" "}
+        {hosted
+          ? `${rows.length} lessons · ${cases.length} incident files · ${questions.length} design questions.`
+          : `${read} of ${rows.length} lessons read · ${reviewed} of ${cases.length} incidents reviewed · ${questions.length} design questions.`}
       </p>
 
       <nav className="mt-6 flex gap-6 text-sm" aria-label="Sections">
@@ -52,7 +56,7 @@ export default function AiLabPage() {
               {rows
                 .filter((r) => r.module === mod)
                 .map((r) => {
-                  const isNext = r.nn === next?.nn && !progress.lessons[r.nn]
+                  const isNext = !hosted && r.nn === next?.nn && !progress.lessons[r.nn]
                   return (
                     <Row
                       key={r.nn}

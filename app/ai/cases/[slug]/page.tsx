@@ -6,6 +6,7 @@ import { CaseReveal } from "@/components/ai/case-reveal"
 import { PromptCard } from "@/components/prompt-card"
 import { aiLabAvailable, getCase, readAiProgress, readAiRoadmap } from "@/lib/core/ai-lab"
 import { aiCasePrompt } from "@/lib/core/prompts"
+import { isHosted } from "@/lib/core/hosted"
 
 export default async function CasePage({ params }: PageProps<"/ai/cases/[slug]">) {
   const { slug } = await params
@@ -14,6 +15,7 @@ export default async function CasePage({ params }: PageProps<"/ai/cases/[slug]">
   if (!c) notFound()
   const state = readAiProgress().cases[slug]
   const lessons = readAiRoadmap().filter((r) => c.lessons.includes(r.nn))
+  const hosted = isHosted()
 
   return (
     <article>
@@ -23,20 +25,22 @@ export default async function CasePage({ params }: PageProps<"/ai/cases/[slug]">
       <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance">{c.title}</h1>
       {c.severity && <p className="mt-3 text-muted-foreground">{c.severity}</p>}
 
-      <div className="mt-8">
-        <PromptCard
-          title="Review it with your AI"
-          description="Your assistant plays incident commander: it asks the stop-and-think questions, waits for your hypothesis, then compares it with what happened."
-          prompt={aiCasePrompt(slug, c.title)}
-        />
-      </div>
+      {!hosted && (
+        <div className="mt-8">
+          <PromptCard
+            title="Review it with your AI"
+            description="Your assistant plays incident commander: it asks the stop-and-think questions, waits for your hypothesis, then compares it with what happened."
+            prompt={aiCasePrompt(slug, c.title)}
+          />
+        </div>
+      )}
 
       <div className="mt-10">
         <AiMarkdown source={c.before} />
       </div>
 
       {c.after ? (
-        <CaseReveal slug={slug} initial={state?.hypothesis ?? ""} revealed={Boolean(state?.revealedAt)}>
+        <CaseReveal slug={slug} initial={state?.hypothesis ?? ""} revealed={Boolean(state?.revealedAt)} hosted={hosted}>
           <AiMarkdown source={c.after} />
         </CaseReveal>
       ) : null}
