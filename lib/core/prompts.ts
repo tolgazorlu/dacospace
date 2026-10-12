@@ -21,7 +21,6 @@ export function setupPrompt(): string {
    git clone ${DACOSPACE_REPO}
    git clone ${LAB_REPO}
    git clone ${AI_LAB_REPO}
-   They are private. If cloning fails, tell me to ask the owner for an invite and stop.
 2. In dacospace run: pnpm run setup
    It checks Docker, Java 25, Node, pnpm and python3. If something is missing, tell me exactly how to install it on my OS and wait for me. Do not install system software without asking.
 3. Then: pnpm build && pnpm start   (keep it running; it serves http://localhost:4120)
