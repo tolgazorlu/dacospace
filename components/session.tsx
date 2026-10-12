@@ -5,6 +5,8 @@ import Markdown from "react-markdown"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { saveAnswerAction } from "@/app/actions"
+import { saveLocalAnswer, useLocalAnswers } from "@/lib/client/answers"
+import { DACOSPACE_REPO } from "@/lib/core/prompts"
 import type { Day } from "@/lib/core/days"
 import type { Question } from "@/lib/core/questions"
 
@@ -61,14 +63,33 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   )
 }
 
-export function Session({ day, question }: { day: Day; question: Question }) {
+/** hosted: the answer lives in this browser (localStorage) instead of data/days on the server. */
+export function Session({ day, question, hosted = false }: { day: Day; question: Question; hosted?: boolean }) {
   const [asked, setAsked] = useState(0)
-  const [answer, setAnswer] = useState(day.answer ?? "")
+  const [draft, setDraft] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [showRubric, setShowRubric] = useState(false)
   const [pending, start] = useTransition()
-  const answered = Boolean(day.answer)
-  const dirty = answer.trim() !== (day.answer ?? "")
+  const local = useLocalAnswers()?.[day.date]
+  const saved = hosted ? (local?.questionId === question.id ? local.answer : undefined) : day.answer
+  const answer = draft ?? saved ?? ""
+  const answered = Boolean(saved)
+  const dirty = answer.trim() !== (saved ?? "")
+
+  const submit = () => {
+    if (!hosted) {
+      start(async () => {
+        const res = await saveAnswerAction(day.date, answer)
+        setError(res.error ?? null)
+      })
+      return
+    }
+    const text = answer.trim()
+    if (!text) return setError("Write something before saving.")
+    saveLocalAnswer(day.date, question.id, text)
+    setDraft(null)
+    setError(null)
+  }
   const clarifications = answered ? question.clarifications : question.clarifications.slice(0, asked)
   const left = question.clarifications.length - clarifications.length
 
@@ -92,21 +113,13 @@ export function Session({ day, question }: { day: Day; question: Question }) {
         {!answered && <Timer minutes={question.minutes} />}
         <Textarea
           value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
+          onChange={(e) => setDraft(e.target.value)}
           placeholder={SCAFFOLD}
           className="mt-4 min-h-72 resize-y font-mono text-sm leading-relaxed"
           aria-label="Your design"
         />
         <div className="mt-3 flex items-center gap-3">
-          <Button
-            disabled={pending || !dirty}
-            onClick={() =>
-              start(async () => {
-                const res = await saveAnswerAction(day.date, answer)
-                setError(res.error ?? null)
-              })
-            }
-          >
+          <Button disabled={pending || !dirty} onClick={submit}>
             {pending ? "Saving" : answered ? "Update answer" : "Submit answer"}
           </Button>
           {error && <span role="alert" className="text-sm font-medium">{error}</span>}
@@ -144,7 +157,18 @@ export function Session({ day, question }: { day: Day; question: Question }) {
         </Section>
       )}
 
-      {!day.review && (
+      {hosted && (
+        <p className="mt-16 text-sm text-muted-foreground">
+          Your answers stay in this browser. For an AI interviewer that reviews your design, run dacospace on your machine
+          with its MCP server:{" "}
+          <a href={DACOSPACE_REPO.replace(/\.git$/, "")} className="underline underline-offset-4">
+            setup on GitHub
+          </a>
+          .
+        </p>
+      )}
+
+      {!hosted && !day.review && (
         <p className="mt-16 text-sm text-muted-foreground">
           Want a real interviewer? In your AI client, run the <code>mock_interview</code> prompt from the
           dacospace MCP server. Its review shows up here.

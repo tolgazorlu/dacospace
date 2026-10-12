@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { getDay } from "@/lib/core/days"
+import { dayView } from "@/lib/core/days"
+import { isHosted } from "@/lib/core/hosted"
 import { aiLabAvailable, getAiLesson, nextAiLesson, readAiProgress, readAiRoadmap } from "@/lib/core/ai-lab"
 import { currentMission, getLesson, getMission, labAvailable, readProgress } from "@/lib/core/lab"
 import { readNotebook } from "@/lib/core/notebook"
@@ -43,7 +44,8 @@ function Step({
 }
 
 export default function TodayPage() {
-  const { day, question } = getDay()
+  const { day, question } = dayView()
+  const hosted = isHosted()
   const lab = labAvailable()
   const progress = lab ? readProgress() : null
   const m = progress ? currentMission(progress.missions) : undefined
@@ -61,12 +63,14 @@ export default function TodayPage() {
 
   return (
     <>
-      <PromptCard
-        title="Set up the lab with your AI"
-        description="Paste into Claude Code, Codex, Cursor or any coding assistant. It clones both repos, installs, connects MCP, and mentors you without giving away answers."
-        prompt={setupPrompt()}
-      />
-      <p className="mt-12 text-sm text-muted-foreground">{longDate()}</p>
+      {!hosted && (
+        <PromptCard
+          title="Set up the lab with your AI"
+          description="Paste into Claude Code, Codex, Cursor or any coding assistant. It clones both repos, installs, connects MCP, and mentors you without giving away answers."
+          prompt={setupPrompt()}
+        />
+      )}
+      <p className={`${hosted ? "" : "mt-12 "}text-sm text-muted-foreground`}>{longDate()}</p>
       <h1 className="mt-2 text-3xl font-semibold tracking-tight">Today</h1>
       <p className="mt-2 text-sm text-muted-foreground">
         Read the concept, break it on a real system, then defend a design out loud.
@@ -102,7 +106,7 @@ export default function TodayPage() {
             kind: `Interview · ${question.track === "ai" ? "AI · " : ""}${question.level} · ${question.minutes} min`,
             title: question.title,
             detail: question.topics.filter((t) => t !== "ai").join(", "),
-            state: day.review ? day.review.verdict : day.answer ? "answered" : "open",
+            state: hosted ? "today" : day.review ? day.review.verdict : day.answer ? "answered" : "open",
             highlight: missionDone && !day.answer,
           },
         ]
@@ -111,7 +115,13 @@ export default function TodayPage() {
             <Step key={x.href} n={i + 1} {...x} />
           ))}
       </ol>
-      {!lab && (
+      {hosted && (
+        <p className="mt-10 text-sm text-muted-foreground">
+          This is the hosted demo: the interview question works here and your answers stay in this browser. The lesson
+          and the hands-on lab run on your machine. <Link href="/lab" className="underline underline-offset-4">How</Link>.
+        </p>
+      )}
+      {!lab && !hosted && (
         <p className="mt-10 text-sm text-muted-foreground">
           The lab is not connected. <Link href="/lab" className="underline underline-offset-4">Set it up</Link>.
         </p>
