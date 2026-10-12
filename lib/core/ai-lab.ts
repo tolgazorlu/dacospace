@@ -26,7 +26,7 @@ const NN = /^\d{2}$/
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 const dir = (...p: string[]) => path.join(/*turbopackIgnore: true*/ aiLabDir(), ...p)
 
-export const aiLabAvailable = () => !isHosted() && fs.existsSync(dir("PROGRESS.md"))
+export const aiLabAvailable = () => fs.existsSync(dir("PROGRESS.md"))
 
 function lessonFile(nn: string): string | null {
   if (!fs.existsSync(dir("lessons"))) return null
@@ -117,6 +117,7 @@ export type AiProgress = z.infer<typeof Progress>
 const progressFile = () => path.join(dataDir(), "ai-lab.json")
 
 export function readAiProgress(): AiProgress {
+  if (isHosted()) return Progress.parse({})
   const f = progressFile()
   return Progress.parse(fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, "utf8")) : {})
 }

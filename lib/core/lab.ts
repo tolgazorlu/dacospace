@@ -45,7 +45,8 @@ export type RunResult = {
 const NN = /^\d{2}$/
 
 export function labAvailable(): boolean {
-  if (isHosted()) return false
+  // The hosted snapshot has no ./lab script: it is for reading, nothing runs.
+  if (isHosted()) return fs.existsSync(path.join(labDir(), "PROGRESS.md"))
   return fs.existsSync(path.join(labDir(), "lab")) && fs.existsSync(path.join(labDir(), "PROGRESS.md"))
 }
 
@@ -82,7 +83,10 @@ export function parseProgress(source: string): { missions: Omit<MissionRow, "mis
 }
 
 export function readProgress(): { missions: MissionRow[]; log: LogLine[] } {
-  const { missions, log } = parseProgress(fs.readFileSync(path.join(labDir(), "PROGRESS.md"), "utf8"))
+  const parsed = parseProgress(fs.readFileSync(path.join(labDir(), "PROGRESS.md"), "utf8"))
+  // Hosted: nobody's progress is shown, even if a snapshot still carried some.
+  const missions = isHosted() ? parsed.missions.map((m) => ({ ...m, status: "todo" as const, date: null })) : parsed.missions
+  const log = isHosted() ? [] : parsed.log
   return {
     missions: missions.map((m) => ({ ...m, missionFile: findFile("labs", m.nn), lessonFile: findFile("lessons", m.nn) })),
     log,
