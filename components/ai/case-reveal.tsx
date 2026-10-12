@@ -7,16 +7,19 @@ import { Button } from "@/components/ui/button"
 /**
  * The reader writes a hypothesis before the autopsy is shown. Reveal works with an empty box too,
  * but the button says so, because guessing first is the point of a case file.
+ * hosted: nothing is saved on the server; Reveal only opens the autopsy in this tab.
  */
 export function CaseReveal({
   slug,
   initial,
   revealed,
+  hosted = false,
   children,
 }: {
   slug: string
   initial: string
   revealed: boolean
+  hosted?: boolean
   children: React.ReactNode
 }) {
   const [text, setText] = useState(initial)
@@ -24,7 +27,8 @@ export function CaseReveal({
   const [saved, setSaved] = useState<string | null>(null)
   const [pending, start] = useTransition()
 
-  const save = (reveal: boolean) =>
+  const save = (reveal: boolean) => {
+    if (hosted) return setOpen(reveal || open)
     start(async () => {
       const res = await caseHypothesisAction(slug, text, reveal)
       if (res?.ok) {
@@ -32,6 +36,7 @@ export function CaseReveal({
         if (reveal) setOpen(true)
       }
     })
+  }
 
   return (
     <>
@@ -56,12 +61,14 @@ export function CaseReveal({
         <div className="mt-3 flex flex-wrap items-center gap-3">
           {!open && (
             <Button type="button" onClick={() => save(true)} disabled={pending}>
-              {text.trim() ? "Save and reveal what happened" : "Reveal without guessing"}
+              {text.trim() ? (hosted ? "Reveal what happened" : "Save and reveal what happened") : "Reveal without guessing"}
             </Button>
           )}
-          <Button type="button" variant="outline" onClick={() => save(false)} disabled={pending}>
-            Save
-          </Button>
+          {!hosted && (
+            <Button type="button" variant="outline" onClick={() => save(false)} disabled={pending}>
+              Save
+            </Button>
+          )}
           {saved && (
             <span role="status" className="text-sm text-muted-foreground">
               {saved}

@@ -5,6 +5,7 @@ import { RubricReveal } from "@/components/ai/rubric-reveal"
 import { PromptCard } from "@/components/prompt-card"
 import { aiInterviewPrompt } from "@/lib/core/prompts"
 import { getQuestion } from "@/lib/core/questions"
+import { isHosted } from "@/lib/core/hosted"
 
 function List({ items }: { items: string[] }) {
   return (
@@ -30,13 +31,15 @@ export default async function AiQuestionPage({ params }: PageProps<"/ai/question
       <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance">{q.title}</h1>
       <p className="mt-3 text-muted-foreground">{q.topics.filter((t) => t !== "ai").join(", ")}</p>
 
-      <div className="mt-8">
-        <PromptCard
-          title="Get interviewed by your AI"
-          description="A full mock interview: your assistant reads only the prompt aloud, answers your clarifying questions, pushes on weak spots, then grades you against the rubric."
-          prompt={aiInterviewPrompt(q.id, q.title)}
-        />
-      </div>
+      {!isHosted() && (
+        <div className="mt-8">
+          <PromptCard
+            title="Get interviewed by your AI"
+            description="A full mock interview: your assistant reads only the prompt aloud, answers your clarifying questions, pushes on weak spots, then grades you against the rubric."
+            prompt={aiInterviewPrompt(q.id, q.title)}
+          />
+        </div>
+      )}
 
       <section className="mt-10">
         <h2 className="text-sm font-semibold">Prompt</h2>

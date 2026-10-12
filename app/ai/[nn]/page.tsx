@@ -7,6 +7,7 @@ import { PromptCard } from "@/components/prompt-card"
 import { Button } from "@/components/ui/button"
 import { aiLabAvailable, getAiLesson, getCase, readAiProgress, readAiRoadmap } from "@/lib/core/ai-lab"
 import { aiLessonPrompt } from "@/lib/core/prompts"
+import { isHosted } from "@/lib/core/hosted"
 
 export default async function AiLessonPage({ params }: PageProps<"/ai/[nn]">) {
   const { nn } = await params
@@ -17,6 +18,7 @@ export default async function AiLessonPage({ params }: PageProps<"/ai/[nn]">) {
   const lesson = getAiLesson(nn)
   const progress = readAiProgress()
   const read = Boolean(progress.lessons[nn])
+  const hosted = isHosted()
   const i = rows.indexOf(row)
   const prev = rows[i - 1]
   const next = rows[i + 1]
@@ -39,13 +41,15 @@ export default async function AiLessonPage({ params }: PageProps<"/ai/[nn]">) {
         <p className="mt-8 text-muted-foreground">This lesson is on the roadmap but not written yet.</p>
       ) : (
         <>
-          <div className="mt-8">
-            <PromptCard
-              title="Study it with your AI"
-              description="Your assistant reads the lesson and its incident files, then quizzes you and challenges your decisions instead of summarising."
-              prompt={aiLessonPrompt(nn, lesson.title)}
-            />
-          </div>
+          {!hosted && (
+            <div className="mt-8">
+              <PromptCard
+                title="Study it with your AI"
+                description="Your assistant reads the lesson and its incident files, then quizzes you and challenges your decisions instead of summarising."
+                prompt={aiLessonPrompt(nn, lesson.title)}
+              />
+            </div>
+          )}
           <div className="mt-10">
             <AiMarkdown source={lesson.body} />
           </div>
@@ -66,15 +70,17 @@ export default async function AiLessonPage({ params }: PageProps<"/ai/[nn]">) {
             </section>
           )}
 
-          <div className="mt-12 flex flex-wrap items-center gap-4 border-t pt-8">
-            {read ? (
-              <span className="text-sm text-muted-foreground">Marked as read.</span>
-            ) : (
-              <form action={aiLessonReadAction.bind(null, nn)}>
-                <Button type="submit">I&apos;ve read it and answered the check question</Button>
-              </form>
-            )}
-          </div>
+          {!hosted && (
+            <div className="mt-12 flex flex-wrap items-center gap-4 border-t pt-8">
+              {read ? (
+                <span className="text-sm text-muted-foreground">Marked as read.</span>
+              ) : (
+                <form action={aiLessonReadAction.bind(null, nn)}>
+                  <Button type="submit">I&apos;ve read it and answered the check question</Button>
+                </form>
+              )}
+            </div>
+          )}
         </>
       )}
 
