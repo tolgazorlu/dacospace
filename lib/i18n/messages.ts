@@ -75,6 +75,10 @@ const en = {
     localHintA: "Want a real interviewer? In your AI client, run the",
     localHintB: "prompt from the dacospace MCP server. Its review shows up here.",
     todayLabel: "Today",
+    showHint: "Show a hint",
+    hideHint: "Hide the hint",
+    hintTitle: "Where the problem comes from",
+    hintNote: "Where the problem comes from, not the answer. Move over it to change the load, click to cut the service.",
   },
   archive: {
     title: "Archive",
@@ -326,6 +330,10 @@ const tr: Messages = {
     localHintA: "Gerçek bir mülakatçı mı istiyorsun? AI client'ında dacospace MCP server'ındaki",
     localHintB: "prompt'unu çalıştır. Değerlendirmesi burada görünür.",
     todayLabel: "Bugün",
+    showHint: "İpucu göster",
+    hideHint: "İpucunu gizle",
+    hintTitle: "Sorun nereden çıkıyor",
+    hintNote: "Sorunun nereden çıktığını gösterir, cevabı değil. Yükü değiştirmek için üzerinde gez, servisi kesmek için tıkla.",
   },
   archive: {
     title: "Arşiv",
