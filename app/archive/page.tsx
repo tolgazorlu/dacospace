@@ -1,8 +1,19 @@
 import Link from "next/link"
+import { LocalArchive } from "@/components/hosted/local-archive"
 import { listDays } from "@/lib/core/days"
+import { isHosted } from "@/lib/core/hosted"
 import { loadQuestions } from "@/lib/core/questions"
 
 export default function ArchivePage() {
+  if (isHosted()) {
+    const titles = Object.fromEntries(loadQuestions("systems").map((q) => [q.id, q.title]))
+    return (
+      <>
+        <h1 className="text-3xl font-semibold tracking-tight">Archive</h1>
+        <LocalArchive titles={titles} />
+      </>
+    )
+  }
   const days = listDays()
   const bank = new Map(loadQuestions().map((q) => [q.id, q]))
   return (

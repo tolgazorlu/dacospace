@@ -1,6 +1,16 @@
+import { RunsLocally } from "@/components/hosted/runs-locally"
+import { isHosted } from "@/lib/core/hosted"
 import { labDir } from "@/lib/core/paths"
 
 export function LabMissing() {
+  if (isHosted()) {
+    return (
+      <RunsLocally
+        title="Lab"
+        what="The Scale Lab starts Docker, a Java ordering service and k6 load tests, then streams the ./lab commands into this page."
+      />
+    )
+  }
   return (
     <div className="prose-daco">
       <h1 className="text-3xl font-semibold tracking-tight">Lab</h1>
