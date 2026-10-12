@@ -1,7 +1,9 @@
 import Link from "next/link"
 import { AiMissing } from "@/components/ai/ai-missing"
 import { aiLabAvailable, listCases, nextAiLesson, readAiProgress, readAiRoadmap } from "@/lib/core/ai-lab"
-import { loadQuestions } from "@/lib/core/questions"
+import { loadQuestions, localize } from "@/lib/core/questions"
+import { getLang } from "@/lib/i18n/server"
+import { messages } from "@/lib/i18n/messages"
 import { isHosted } from "@/lib/core/hosted"
 
 function Row({ href, lead, title, detail, state, strong }: { href: string; lead: string; title: string; detail: string; state: string; strong?: boolean }) {
@@ -19,13 +21,15 @@ function Row({ href, lead, title, detail, state, strong }: { href: string; lead:
   )
 }
 
-export default function AiLabPage() {
+export default async function AiLabPage() {
+  const lang = await getLang()
+  const t = messages(lang)
   if (!aiLabAvailable()) return <AiMissing />
   const rows = readAiRoadmap()
   const progress = readAiProgress()
   const next = nextAiLesson(rows, progress)
   const cases = listCases()
-  const questions = loadQuestions("ai")
+  const questions = loadQuestions("ai").map((q) => localize(q, lang))
   const read = rows.filter((r) => progress.lessons[r.nn]).length
   const hosted = isHosted()
   const reviewed = cases.filter((c) => progress.cases[c.slug]?.revealedAt).length
@@ -34,18 +38,18 @@ export default function AiLabPage() {
 
   return (
     <>
-      <h1 className="text-3xl font-semibold tracking-tight">AI Systems Lab</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">{t.ai.title}</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        Design, break and defend enterprise AI systems: agents, RAG, evals, security, operations.{" "}
+        {t.ai.intro}{" "}
         {hosted
-          ? `${rows.length} lessons · ${cases.length} incident files · ${questions.length} design questions.`
-          : `${read} of ${rows.length} lessons read · ${reviewed} of ${cases.length} incidents reviewed · ${questions.length} design questions.`}
+          ? t.ai.hostedCounts(rows.length, cases.length, questions.length)
+          : t.ai.counts(read, rows.length, reviewed, cases.length, questions.length)}
       </p>
 
-      <nav className="mt-6 flex gap-6 text-sm" aria-label="Sections">
-        <a href="#lessons" className="underline-offset-4 hover:underline">Lessons</a>
-        <a href="#cases" className="underline-offset-4 hover:underline">Incident files</a>
-        <a href="#questions" className="underline-offset-4 hover:underline">Design questions</a>
+      <nav className="mt-6 flex gap-6 text-sm" aria-label={t.ai.sections}>
+        <a href="#lessons" className="underline-offset-4 hover:underline">{t.ai.lessons}</a>
+        <a href="#cases" className="underline-offset-4 hover:underline">{t.ai.incidentFiles}</a>
+        <a href="#questions" className="underline-offset-4 hover:underline">{t.ai.designQuestions}</a>
       </nav>
 
       <section id="lessons" className="mt-12 scroll-mt-8">
@@ -64,7 +68,7 @@ export default function AiLabPage() {
                       lead={r.nn}
                       title={r.title}
                       detail={r.concepts}
-                      state={progress.lessons[r.nn] ? "read" : isNext ? "next" : r.file ? "" : "not written"}
+                      state={progress.lessons[r.nn] ? t.ai.read : isNext ? t.ai.next : r.file ? "" : t.ai.notWritten}
                       strong={isNext}
                     />
                   )
@@ -75,9 +79,9 @@ export default function AiLabPage() {
       </section>
 
       <section id="cases" className="mt-20 scroll-mt-8">
-        <h2 className="text-xl font-semibold tracking-tight">Incident files</h2>
+        <h2 className="text-xl font-semibold tracking-tight">{t.ai.incidentFiles}</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Real incidents from primary sources. You get the facts, form a hypothesis, then reveal what actually happened.
+          {t.ai.incidentIntro}
         </p>
         {categories.map((cat) => (
           <div key={cat} className="mt-8">
@@ -92,7 +96,7 @@ export default function AiLabPage() {
                     lead=""
                     title={c.title}
                     detail={c.severity}
-                    state={progress.cases[c.slug]?.revealedAt ? "reviewed" : ""}
+                    state={progress.cases[c.slug]?.revealedAt ? t.ai.reviewed : ""}
                   />
                 ))}
             </ol>
@@ -101,21 +105,21 @@ export default function AiLabPage() {
       </section>
 
       <section id="questions" className="mt-20 scroll-mt-8">
-        <h2 className="text-xl font-semibold tracking-tight">Design questions</h2>
+        <h2 className="text-xl font-semibold tracking-tight">{t.ai.designQuestions}</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Staff-level AI system design interviews. They also rotate into your daily Interview, every other day.
+          {t.ai.questionsIntro}
         </p>
         <ol className="mt-4 divide-y">
           {questions
-            .sort((a, b) => a.title.localeCompare(b.title))
+            .sort((a, b) => a.title.localeCompare(b.title, t.dateLocale))
             .map((q) => (
               <Row
                 key={q.id}
                 href={`/ai/questions/${q.id}`}
                 lead=""
                 title={q.title}
-                detail={q.topics.filter((t) => t !== "ai").join(", ")}
-                state={`${q.level} · ${q.minutes} min`}
+                detail={q.topics.filter((x) => x !== "ai").join(", ")}
+                state={`${q.level} · ${t.common.min(q.minutes)}`}
               />
             ))}
         </ol>

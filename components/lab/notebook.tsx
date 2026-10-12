@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react"
 import Markdown from "react-markdown"
 import { Button } from "@/components/ui/button"
+import { useT } from "@/components/i18n"
 import { Textarea } from "@/components/ui/textarea"
 import { completeMissionAction, saveNotebookAction } from "@/app/lab-actions"
 import type { Notebook as NB } from "@/lib/core/notebook"
@@ -35,11 +36,12 @@ export function Notebook({
   const [takeaway, setTakeaway] = useState(initial.takeaway)
   const [msg, setMsg] = useState<{ text: string; error?: boolean } | null>(null)
   const [pending, start] = useTransition()
+  const t = useT()
   const fields = { notes, checkAnswer, takeaway }
 
   return (
     <div>
-      <Field label="Evidence and notes" hint="Fill the table with numbers from the console and Grafana. Markdown works.">
+      <Field label={t.notebook.evidence} hint={t.notebook.evidenceHint}>
         <Textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
@@ -47,14 +49,14 @@ export function Notebook({
         />
       </Field>
       {checkQuestion && (
-        <Field label="Check question">
+        <Field label={t.notebook.check}>
           <div className="prose-daco mb-2 text-sm text-muted-foreground">
             <Markdown>{checkQuestion}</Markdown>
           </div>
           <Textarea value={checkAnswer} onChange={(e) => setCheckAnswer(e.target.value)} className="min-h-24 resize-y" />
         </Field>
       )}
-      <Field label="In your own words" hint="One sentence. Not a summary of the mission, the thing you will remember.">
+      <Field label={t.notebook.own} hint={t.notebook.ownHint}>
         <Textarea value={takeaway} onChange={(e) => setTakeaway(e.target.value)} className="min-h-16 resize-y" />
       </Field>
       <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -64,11 +66,11 @@ export function Notebook({
           onClick={() =>
             start(async () => {
               const res = await saveNotebookAction(nn, fields)
-              setMsg(res.error ? { text: res.error, error: true } : { text: "Saved" })
+              setMsg(res.error ? { text: res.error, error: true } : { text: t.common.saved })
             })
           }
         >
-          Save
+          {t.common.save}
         </Button>
         {!done && (
           <Button
@@ -76,11 +78,11 @@ export function Notebook({
             onClick={() =>
               start(async () => {
                 const res = await completeMissionAction(nn, fields)
-                setMsg(res.error ? { text: res.error, error: true } : { text: `Mission ${nn} is done. Commit your change in java-scale-lab.` })
+                setMsg(res.error ? { text: res.error, error: true } : { text: t.notebook.completed(nn) })
               })
             }
           >
-            Complete mission
+            {t.notebook.complete}
           </Button>
         )}
         {msg && <span role={msg.error ? "alert" : "status"} className={`text-sm ${msg.error ? "font-medium text-foreground" : "text-muted-foreground"}`}>{msg.text}</span>}

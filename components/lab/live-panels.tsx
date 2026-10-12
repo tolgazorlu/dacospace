@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { useTheme } from "@/components/theme-toggle"
+import { useT } from "@/components/i18n"
+import type { Messages } from "@/lib/i18n/messages"
 import { HEADERS } from "./console-context"
 
 // Panel ids from java-scale-lab infra/observability/dashboards/scale-lab.json
@@ -16,11 +18,10 @@ const VIEWS = {
 type View = keyof typeof VIEWS
 
 /** Why a panel can say "No data", in the order you hit them. */
-function hint(app: string | null, view: View): string | null {
-  if (app === "down") return "The app is stopped, so Prometheus has nothing to scrape. Start it in Environment above."
-  if (app === "starting") return "The app is starting. Metrics appear about 10 seconds after it is up."
-  if (app === "up" && (view === "Latency" || view === "Load" || view === "Payments"))
-    return "These panels need traffic. Run a load test from the mission; they fill within ~10 seconds."
+function hint(t: Messages, app: string | null, view: View): string | null {
+  if (app === "down") return t.panels.down
+  if (app === "starting") return t.panels.starting
+  if (app === "up" && (view === "Latency" || view === "Load" || view === "Payments")) return t.panels.traffic
   return null
 }
 
@@ -40,21 +41,22 @@ export function LivePanels({ grafanaUp }: { grafanaUp: boolean }) {
       clearInterval(t)
     }
   }, [])
-  const note = hint(app, view)
+  const t = useT()
+  const note = hint(t, app, view)
   const theme = useTheme()
   return (
-    <section aria-label="Live metrics">
+    <section aria-label={t.panels.title}>
       <div className="flex items-baseline justify-between gap-3">
-        <h2 className="text-sm font-semibold">Live metrics</h2>
+        <h2 className="text-sm font-semibold">{t.panels.title}</h2>
         <select
-          aria-label="Time range"
+          aria-label={t.panels.range}
           value={range}
           onChange={(e) => setRange(e.target.value)}
           className="bg-transparent text-xs text-muted-foreground"
         >
           {["5m", "10m", "30m", "1h"].map((r) => (
             <option key={r} value={r}>
-              last {r}
+              {t.panels.last(r)}
             </option>
           ))}
         </select>
@@ -86,7 +88,7 @@ export function LivePanels({ grafanaUp }: { grafanaUp: boolean }) {
           ))}
         </div>
       ) : (
-        <p className="mt-3 text-sm text-muted-foreground">Start the infrastructure to see Grafana panels here.</p>
+        <p className="mt-3 text-sm text-muted-foreground">{t.panels.noInfra}</p>
       )}
     </section>
   )

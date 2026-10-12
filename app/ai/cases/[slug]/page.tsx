@@ -7,9 +7,13 @@ import { PromptCard } from "@/components/prompt-card"
 import { aiLabAvailable, getCase, readAiProgress, readAiRoadmap } from "@/lib/core/ai-lab"
 import { aiCasePrompt } from "@/lib/core/prompts"
 import { isHosted } from "@/lib/core/hosted"
+import { getLang } from "@/lib/i18n/server"
+import { messages } from "@/lib/i18n/messages"
 
 export default async function CasePage({ params }: PageProps<"/ai/cases/[slug]">) {
   const { slug } = await params
+  const lang = await getLang()
+  const t = messages(lang)
   if (!aiLabAvailable()) return <AiMissing />
   const c = getCase(slug)
   if (!c) notFound()
@@ -20,7 +24,7 @@ export default async function CasePage({ params }: PageProps<"/ai/cases/[slug]">
   return (
     <article>
       <p className="text-sm text-muted-foreground">
-        <Link href="/ai#cases" className="hover:text-foreground">Incident file</Link> · {c.category}
+        <Link href="/ai#cases" className="hover:text-foreground">{t.ai.incidentFile}</Link> · {c.category}
       </p>
       <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance">{c.title}</h1>
       {c.severity && <p className="mt-3 text-muted-foreground">{c.severity}</p>}
@@ -28,9 +32,9 @@ export default async function CasePage({ params }: PageProps<"/ai/cases/[slug]">
       {!hosted && (
         <div className="mt-8">
           <PromptCard
-            title="Review it with your AI"
-            description="Your assistant plays incident commander: it asks the stop-and-think questions, waits for your hypothesis, then compares it with what happened."
-            prompt={aiCasePrompt(slug, c.title)}
+            title={t.ai.reviewTitle}
+            description={t.ai.reviewDescription}
+            prompt={aiCasePrompt(slug, c.title, lang)}
           />
         </div>
       )}
@@ -47,7 +51,7 @@ export default async function CasePage({ params }: PageProps<"/ai/cases/[slug]">
 
       {lessons.length > 0 && (
         <section className="mt-14 border-t pt-8">
-          <h2 className="text-sm font-semibold">Lessons behind this case</h2>
+          <h2 className="text-sm font-semibold">{t.ai.lessonsBehind}</h2>
           <ul className="mt-3 space-y-2 text-sm">
             {lessons.map((l) => (
               <li key={l.nn}>

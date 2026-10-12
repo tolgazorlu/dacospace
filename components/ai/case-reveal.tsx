@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react"
 import { caseHypothesisAction } from "@/app/ai-actions"
 import { Button } from "@/components/ui/button"
+import { useT } from "@/components/i18n"
 
 /**
  * The reader writes a hypothesis before the autopsy is shown. Reveal works with an empty box too,
@@ -26,13 +27,14 @@ export function CaseReveal({
   const [open, setOpen] = useState(revealed)
   const [saved, setSaved] = useState<string | null>(null)
   const [pending, start] = useTransition()
+  const t = useT()
 
   const save = (reveal: boolean) => {
     if (hosted) return setOpen(reveal || open)
     start(async () => {
       const res = await caseHypothesisAction(slug, text, reveal)
       if (res?.ok) {
-        setSaved(reveal ? null : "Saved")
+        setSaved(reveal ? null : t.common.saved)
         if (reveal) setOpen(true)
       }
     })
@@ -40,12 +42,12 @@ export function CaseReveal({
 
   return (
     <>
-      <section className="mt-10 rounded-lg border p-4" aria-label="Your hypothesis">
+      <section className="mt-10 rounded-lg border p-4" aria-label={t.ai.hypothesis}>
         <label htmlFor="hypothesis" className="text-sm font-medium">
-          Your hypothesis
+          {t.ai.hypothesis}
         </label>
         <p className="mt-1 text-sm text-muted-foreground">
-          Answer the questions above before you read on: what failed, why, and what would have stopped it.
+          {t.ai.hypothesisHint}
         </p>
         <textarea
           id="hypothesis"
@@ -61,12 +63,12 @@ export function CaseReveal({
         <div className="mt-3 flex flex-wrap items-center gap-3">
           {!open && (
             <Button type="button" onClick={() => save(true)} disabled={pending}>
-              {text.trim() ? (hosted ? "Reveal what happened" : "Save and reveal what happened") : "Reveal without guessing"}
+              {text.trim() ? (hosted ? t.ai.reveal : t.ai.saveReveal) : t.ai.revealBlind}
             </Button>
           )}
           {!hosted && (
             <Button type="button" variant="outline" onClick={() => save(false)} disabled={pending}>
-              Save
+              {t.common.save}
             </Button>
           )}
           {saved && (

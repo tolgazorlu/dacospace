@@ -3,17 +3,19 @@ import { Session } from "@/components/session"
 import type { Day } from "@/lib/core/days"
 import { today } from "@/lib/core/days"
 import { isHosted } from "@/lib/core/hosted"
+import { getT } from "@/lib/i18n/server"
 import type { Question } from "@/lib/core/questions"
 
-const longDate = (date: string) =>
-  new Date(`${date}T12:00:00`).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })
+const longDate = (date: string, locale: string) =>
+  new Date(`${date}T12:00:00`).toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" })
 
-export function QuestionView({ day, question }: { day: Day; question: Question }) {
+export async function QuestionView({ day, question }: { day: Day; question: Question }) {
+  const t = await getT()
   const isToday = day.date === today()
   return (
     <article>
       <p className="text-sm text-muted-foreground">
-        {isToday ? "Today" : longDate(day.date)} · {question.level} · {question.minutes} min
+        {isToday ? t.session.todayLabel : longDate(day.date, t.dateLocale)} · {question.level} · {t.common.min(question.minutes)}
       </p>
       <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance">{question.title}</h1>
       <div className="mt-4 flex flex-wrap gap-1.5">
