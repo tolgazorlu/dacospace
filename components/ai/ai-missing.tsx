@@ -1,6 +1,16 @@
+import { RunsLocally } from "@/components/hosted/runs-locally"
+import { isHosted } from "@/lib/core/hosted"
 import { aiLabDir } from "@/lib/core/paths"
 
 export function AiMissing() {
+  if (isHosted()) {
+    return (
+      <RunsLocally
+        title="AI Systems Lab"
+        what="The AI Systems Lab reads lessons, incident case files and design questions from a separate checkout and keeps your progress on disk."
+      />
+    )
+  }
   return (
     <article>
       <h1 className="text-3xl font-semibold tracking-tight">AI Systems Lab</h1>
