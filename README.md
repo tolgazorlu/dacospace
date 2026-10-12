@@ -76,6 +76,13 @@ pnpm test           # core logic + MCP server end to end
 Answers and reviews live in `data/days/<date>.json` (gitignored). Set
 `DACOSPACE_DATA` to keep them elsewhere.
 
+## Turkish
+
+The header switch (EN / TR) sets a `lang` cookie; without it, a Turkish browser gets Turkish. UI strings live in
+`lib/i18n/messages.ts`. Interview questions have Turkish versions in `questions/tr/<id>.md`: same frontmatter,
+same English section headings, one Turkish bullet per English bullet, technical terms kept in English
+(`tests/questions-tr.test.ts` checks the structure). Lessons, missions and case files stay in English.
+
 ## Hosted mode
 
 The public demo runs the same app with `DACOSPACE_HOSTED=1` (Vercel's `VERCEL=1` turns it on too). The server
