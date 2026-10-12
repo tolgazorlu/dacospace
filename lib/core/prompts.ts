@@ -13,8 +13,12 @@ const MENTOR_RULES = `How to help me (important):
 - If I insist on a solution after really trying, point me to the reference branch and ask me to explain it back to you.
 - Never invent numbers. Use only output from commands we ran.`
 
+/** Appended to every prompt when the UI is in Turkish. */
+const inLang = (lang: "en" | "tr") =>
+  lang === "tr" ? "\n\nTalk to me in Turkish. Keep technical terms (cache, retry, p95, idempotency...) in English, the way Turkish engineers say them." : ""
+
 /** Full setup: both repos, dependencies, infrastructure, MCP, then the first mission. */
-export function setupPrompt(): string {
+export function setupPrompt(lang: "en" | "tr" = "en"): string {
   return `Set up my learning labs: Scale Lab (a hands-on lab where I learn how a Java backend behaves under load), AI Systems Lab (lessons, real incident case files and design questions about enterprise AI systems and agents), and dacospace, their local web UI.
 
 1. In a folder of my choice (ask me, suggest ~/projects), clone both repos side by side:
@@ -29,11 +33,11 @@ export function setupPrompt(): string {
    Its tools (get_lab_state, get_lab_mission, save_lab_review) let you see my notebook and results.
 5. Tell me to open http://localhost:4120, then walk me into mission 01: read lessons/01 first, then labs/01.
 
-${MENTOR_RULES}`
+${MENTOR_RULES}${inLang(lang)}`
 }
 
 /** Start (or continue) one mission, optionally from its start/NN branch. */
-export function missionPrompt(nn: string, title: string): string {
+export function missionPrompt(nn: string, title: string, lang: "en" | "tr" = "en"): string {
   return `Be my mentor for Scale Lab mission ${nn}: "${title}".
 
 1. If java-scale-lab is not on this machine yet, clone it (and dacospace next to it) and run "pnpm run setup" in dacospace:
@@ -45,7 +49,7 @@ export function missionPrompt(nn: string, title: string): string {
 3. Read lessons/${nn}-*.md and labs/${nn}-*.md yourself. Check I read the lesson: ask me its check question.
 4. Then go through the mission with me step by step: predict, measure, the 4 steps, my fix, the evidence.
 
-${MENTOR_RULES}`
+${MENTOR_RULES}${inLang(lang)}`
 }
 
 const AI_TUTOR_RULES = `How to teach me (important):
@@ -57,7 +61,7 @@ const AI_TUTOR_RULES = `How to teach me (important):
 const aiFile = (rel: string) => `ai-systems-lab/${rel} (clone ${AI_LAB_REPO} if it is not here)`
 
 /** Study one AI lesson with an assistant acting as a tutor. */
-export function aiLessonPrompt(nn: string, title: string): string {
+export function aiLessonPrompt(nn: string, title: string, lang: "en" | "tr" = "en"): string {
   return `Tutor me on AI Systems Lab lesson ${nn}: "${title}".
 
 1. Read ${aiFile(`lessons/${nn}-*.md`)} and the case files it lists under **Cases:** (in cases/).
@@ -66,11 +70,11 @@ export function aiLessonPrompt(nn: string, title: string): string {
 4. Then ask the check question. Grade my answer honestly (strong, partial, missing) and tell me what a staff engineer would add.
 5. End with one question I should be able to answer tomorrow.
 
-${AI_TUTOR_RULES}`
+${AI_TUTOR_RULES}${inLang(lang)}`
 }
 
 /** Work through an incident case file as an on-call engineer. */
-export function aiCasePrompt(slug: string, title: string): string {
+export function aiCasePrompt(slug: string, title: string, lang: "en" | "tr" = "en"): string {
   return `Run an incident review with me on the AI Systems Lab case "${title}".
 
 1. Read ${aiFile(`cases/${slug}.md`)}. Show me only the parts before "## What actually happened".
@@ -79,11 +83,11 @@ export function aiCasePrompt(slug: string, title: string): string {
 4. Ask me to design the defenses for a similar system at my company, and rank them by leverage and cost.
 5. Finish with the case's "lesson for your system" as a checklist, and ask which item I would do first and why.
 
-${AI_TUTOR_RULES}`
+${AI_TUTOR_RULES}${inLang(lang)}`
 }
 
 /** A realistic mock interview for one AI design question. */
-export function aiInterviewPrompt(id: string, title: string): string {
+export function aiInterviewPrompt(id: string, title: string, lang: "en" | "tr" = "en"): string {
   return `Interview me for a senior AI engineer role with the system design question "${title}".
 
 1. Read ${aiFile(`questions/${id}.md`)}. It has the prompt, clarifications (your answers to my questions), follow-ups, a rubric and pitfalls. Never show me the rubric or pitfalls before the end.
@@ -92,5 +96,5 @@ export function aiInterviewPrompt(id: string, title: string): string {
 4. Then ask 2 of the follow-ups.
 5. At the end, grade me against each rubric item (met, partly, missed) with a one-line reason, list any pitfalls I fell into, and give an overall verdict: strong no hire, no hire, lean hire, hire, strong hire.
 
-${AI_TUTOR_RULES}`
+${AI_TUTOR_RULES}${inLang(lang)}`
 }
