@@ -44,9 +44,10 @@ export function streamLab(argv: string[], label: string, signal: AbortSignal): R
   g.__labRunning = { label, child, startedAt: Date.now() }
   const enc = new TextEncoder()
 
+  // Set once the client stops reading; enqueue/close on a cancelled stream throws ERR_INVALID_STATE.
+  let closed = false
   const stream = new ReadableStream<Uint8Array>({
     start(controller) {
-      let closed = false
       const send = (s: string) => {
         if (!closed) controller.enqueue(enc.encode(s))
       }
@@ -57,13 +58,16 @@ export function streamLab(argv: string[], label: string, signal: AbortSignal): R
       child.on("close", (code, sig) => {
         if (g.__labRunning?.child === child) g.__labRunning = null
         send(`\n[exit ${code ?? sig}]\n`)
+        if (!closed) controller.close()
         closed = true
-        controller.close()
       })
       signal.addEventListener("abort", () => {
         // The tab went away: keep the command running (a load test should finish), just stop streaming.
         closed = true
       })
+    },
+    cancel() {
+      closed = true
     },
   })
   return new Response(stream, {
