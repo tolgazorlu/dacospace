@@ -90,7 +90,7 @@ export default function TodayPage() {
             kind: `Mission ${m.nn} of ${progress!.missions.length}${mission?.meta.time ? ` · ${mission.meta.time}` : ""}`,
             title: mission?.title ?? m.title,
             detail: mission ? m.concept : "Not written yet. Pull java-scale-lab for new missions.",
-            state: missionDone ? "done" : nb?.takeaway || nb?.notes ? "in progress" : `${done} of ${progress!.missions.length} done`,
+            state: hosted ? "" : missionDone ? "done" : nb?.takeaway || nb?.notes ? "in progress" : `${done} of ${progress!.missions.length} done`,
             highlight: lessonRead && !missionDone,
           },
           ai && aiLesson && {
@@ -98,7 +98,7 @@ export default function TodayPage() {
             kind: `AI lesson ${ai.nn} · ${aiLesson.meta["reading time"] ?? "15-20 min"}`,
             title: aiLesson.title,
             detail: ai.concepts,
-            state: aiProgress?.lessons[ai.nn] ? "read" : `${aiRead} of ${aiRows.length} read`,
+            state: hosted ? "" : aiProgress?.lessons[ai.nn] ? "read" : `${aiRead} of ${aiRows.length} read`,
             highlight: missionDone && !aiProgress?.lessons[ai.nn],
           },
           {
@@ -117,8 +117,9 @@ export default function TodayPage() {
       </ol>
       {hosted && (
         <p className="mt-10 text-sm text-muted-foreground">
-          This is the hosted demo: the interview question works here and your answers stay in this browser. The lesson
-          and the hands-on lab run on your machine. <Link href="/lab" className="underline underline-offset-4">How</Link>.
+          This is the hosted demo: read every lesson, mission and incident file, and answer the interview question (your
+          answers stay in this browser). Running the lab commands needs your own machine:{" "}
+          <Link href="/lab/01" className="underline underline-offset-4">see a mission</Link>.
         </p>
       )}
       {!lab && !hosted && (
