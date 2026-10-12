@@ -17,7 +17,7 @@ lesson before the lab, the clarifications only when you ask, the rubric only aft
 ## Quick start
 
 You need: Docker Desktop (running), Java 25 ([SDKMAN](https://sdkman.io): `sdk install java 25-amzn`),
-Node 20+ with pnpm, git, python3. The lab repos (java-scale-lab, ai-systems-lab) are private: ask for an invite first.
+Node 20+ with pnpm, git, python3.
 
 ```sh
 git clone https://github.com/tolgazorlu/dacospace.git
