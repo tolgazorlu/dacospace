@@ -9,13 +9,15 @@ A daily learning loop for backend and system design:
    embeds the Grafana panels, and keeps your notebook.
 3. **Interview**: one realistic system design interview question, with an AI interviewer.
 
+**Live demo:** https://dacospace.vercel.app (the daily interview question; answers stay in your browser).
+
 The 2024 dacospace tried to teach everything at once. This version shows one step at a time: the
 lesson before the lab, the clarifications only when you ask, the rubric only after you answer.
 
 ## Quick start
 
 You need: Docker Desktop (running), Java 25 ([SDKMAN](https://sdkman.io): `sdk install java 25-amzn`),
-Node 20+ with pnpm, git, python3. Both repos are private: ask for an invite first.
+Node 20+ with pnpm, git, python3. The lab repos (java-scale-lab, ai-systems-lab) are private: ask for an invite first.
 
 ```sh
 git clone https://github.com/tolgazorlu/dacospace.git
@@ -73,6 +75,19 @@ pnpm test           # core logic + MCP server end to end
 
 Answers and reviews live in `data/days/<date>.json` (gitignored). Set
 `DACOSPACE_DATA` to keep them elsewhere.
+
+## Hosted mode
+
+The public demo runs the same app with `DACOSPACE_HOSTED=1` (Vercel's `VERCEL=1` turns it on too). The server
+then writes nothing and spawns nothing:
+
+- the interview question follows from the date (the bank in the order `pickNext` would walk it), so every
+  visitor gets the same one,
+- answers, the streak and the archive live in the visitor's `localStorage`,
+- the lab, the AI lab and AI questions are off, and their pages explain how to run dacospace locally,
+- `/api/lab/*` answers 404 and every server action throws.
+
+Set `NEXT_PUBLIC_CLARITY_ID` on the host to load Microsoft Clarity; without it no analytics script loads.
 
 ## MCP server
 

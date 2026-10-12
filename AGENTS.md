@@ -25,6 +25,8 @@ dacospace parses its `PROGRESS.md` table and the `# Mission NN · Title` /
 - The server binds 127.0.0.1 and `lib/server/guard.ts` checks Host/Origin and the
   `x-dacospace` header. Keep both.
 
+- Hosted mode (`lib/core/hosted.ts`, the public Vercel demo): no disk writes, no spawns. Any new
+  server action calls `assertLocal()`, any new API route goes through `rejectUnlessLocal()`.
 - Verify: `pnpm test && pnpm lint && pnpm typecheck && pnpm build`.
 - Maintainer notes (only if present on this machine): `~/projects/cortex/playbooks/factory.md`
   and `~/projects/cortex/projects/dacospace.md`.
