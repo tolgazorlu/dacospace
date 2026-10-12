@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { rejectUnlessLocal } from "@/lib/server/guard"
+import { assertLocal, rejectUnlessLocal } from "@/lib/server/guard"
 
 const req = (headers: Record<string, string>, method = "GET") => new Request("http://localhost:4120/api/lab/env", { method, headers })
 
@@ -14,5 +14,18 @@ describe("rejectUnlessLocal", () => {
     expect(rejectUnlessLocal(req({ host: "localhost:4120", origin: "http://evil.example", "x-dacospace": "1" }, "POST"))?.status).toBe(403)
     expect(rejectUnlessLocal(req({ host: "localhost:4120" }))?.status).toBe(403)
     expect(rejectUnlessLocal(req({ host: "localhost:4120" }, "POST"))?.status).toBe(403)
+  })
+})
+
+describe("hosted mode", () => {
+  it("hides the lab API and refuses every server action", () => {
+    process.env.DACOSPACE_HOSTED = "1"
+    try {
+      expect(rejectUnlessLocal(req({ host: "localhost:4120", "x-dacospace": "1" }))?.status).toBe(404)
+      expect(() => assertLocal()).toThrow(/read-only/)
+    } finally {
+      delete process.env.DACOSPACE_HOSTED
+    }
+    expect(() => assertLocal()).not.toThrow()
   })
 })

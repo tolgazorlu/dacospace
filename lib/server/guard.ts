@@ -1,4 +1,5 @@
 import "server-only"
+import { isHosted } from "@/lib/core/hosted"
 
 /** Header the app's own fetches send; a cross-site form, <img> or simple GET cannot add it. */
 export const APP_HEADER = "x-dacospace"
@@ -13,6 +14,7 @@ export const APP_HEADER = "x-dacospace"
 const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/
 
 export function rejectUnlessLocal(req: Request): Response | null {
+  if (isHosted()) return new Response("not found", { status: 404 })
   const host = req.headers.get("host") ?? ""
   if (!LOCAL.test(host)) return new Response("dacospace only answers on localhost", { status: 403 })
   const origin = req.headers.get("origin")
@@ -27,4 +29,9 @@ export function rejectUnlessLocal(req: Request): Response | null {
     return new Response("missing x-dacospace header", { status: 403 })
   }
   return null
+}
+
+/** Server actions write files or run ./lab; anyone can call them by id, so the hosted demo refuses all of them. */
+export function assertLocal(): void {
+  if (isHosted()) throw new Error("dacospace is read-only when hosted")
 }

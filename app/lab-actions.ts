@@ -5,10 +5,12 @@ import { redirect } from "next/navigation"
 import { readProgress } from "@/lib/core/lab"
 import { markLessonRead, saveNotebook } from "@/lib/core/notebook"
 import { completeMission } from "@/lib/server/lab-env"
+import { assertLocal } from "@/lib/server/guard"
 
 const NN = /^\d{2}$/
 
 export async function saveNotebookAction(nn: string, fields: { notes: string; checkAnswer: string; takeaway: string }) {
+  assertLocal()
   if (!NN.test(nn)) return { error: "bad mission number" }
   saveNotebook(nn, { notes: fields.notes, checkAnswer: fields.checkAnswer, takeaway: fields.takeaway.trim() })
   revalidatePath(`/lab/${nn}`)
@@ -16,6 +18,7 @@ export async function saveNotebookAction(nn: string, fields: { notes: string; ch
 }
 
 export async function lessonReadAction(nn: string) {
+  assertLocal()
   if (!NN.test(nn)) return
   markLessonRead(nn)
   revalidatePath("/", "layout")
@@ -23,6 +26,7 @@ export async function lessonReadAction(nn: string) {
 }
 
 export async function completeMissionAction(nn: string, fields: { notes: string; checkAnswer: string; takeaway: string }) {
+  assertLocal()
   if (!NN.test(nn)) return { error: "bad mission number" }
   const takeaway = fields.takeaway.trim().replace(/\s+/g, " ")
   if (takeaway.length < 15) return { error: "Write your one-sentence takeaway first. That sentence is the point." }
