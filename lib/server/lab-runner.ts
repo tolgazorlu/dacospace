@@ -3,6 +3,7 @@ import { spawn, type ChildProcess } from "node:child_process"
 import path from "node:path"
 import { labDir } from "@/lib/core/paths"
 import { childEnv } from "./child-env"
+import { assertLocal } from "./guard"
 
 const ANSI = /\x1b\[[0-9;?]*[A-Za-z]/g
 
@@ -18,6 +19,7 @@ export function currentRun(): { label: string; startedAt: number } | null {
 }
 
 export function stopRun(): boolean {
+  assertLocal()
   const r = g.__labRunning
   if (!r?.child.pid) return false
   try {
@@ -33,6 +35,7 @@ export function stopRun(): boolean {
  * plain text. The last line is always "[exit N]" so the client knows the result.
  */
 export function streamLab(argv: string[], label: string, signal: AbortSignal): Response {
+  assertLocal()
   if (g.__labRunning) {
     return new Response(`busy: "${g.__labRunning.label}" is still running\n`, { status: 409 })
   }

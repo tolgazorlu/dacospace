@@ -2,9 +2,12 @@ import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import { aiLabAvailable } from "../lib/core/ai-lab"
+import { aiLabAvailable, readAiProgress } from "../lib/core/ai-lab"
 import { dayView, hostedDay, rotation } from "../lib/core/days"
-import { labAvailable } from "../lib/core/lab"
+import { labAvailable, readProgress } from "../lib/core/lab"
+import { readNotebook } from "../lib/core/notebook"
+import { completeMission, labEnv, startApp, stopApp } from "../lib/server/lab-env"
+import { stopRun, streamLab } from "../lib/server/lab-runner"
 import { LEVELS, loadQuestions, questionSources } from "../lib/core/questions"
 import { makeLab } from "./fixtures/make-lab"
 
@@ -34,15 +37,33 @@ describe("hosted mode", () => {
     expect(() => hostedDay("../etc")).toThrow(/bad date/)
   })
 
-  it("turns both labs off even when checkouts exist next to it", () => {
-    process.env.DACOSPACE_LAB_DIR = makeLab()
-    process.env.DACOSPACE_AI_LAB_DIR = process.env.DACOSPACE_LAB_DIR
-    fs.mkdirSync(path.join(process.env.DACOSPACE_AI_LAB_DIR, "questions"), { recursive: true })
-    expect(labAvailable()).toBe(false)
-    expect(aiLabAvailable()).toBe(false)
-    expect(questionSources().map((s) => s.track)).toEqual(["systems"])
-    delete process.env.DACOSPACE_HOSTED
+  it("reads both labs from the snapshot without anyone's progress, notes or AI progress", () => {
+    process.env.DACOSPACE_LAB_DIR = makeLab() // marks mission 01 done and logs a sentence
+    fs.mkdirSync(path.join(data, "lab"), { recursive: true })
+    fs.writeFileSync(path.join(data, "lab", "02.json"), JSON.stringify({ nn: "02", notes: "private" }))
+    fs.writeFileSync(path.join(data, "ai-lab.json"), JSON.stringify({ lessons: { "01": { readAt: "x" } } }))
     expect(labAvailable()).toBe(true)
+    const { missions, log } = readProgress()
+    expect(missions.every((m) => m.status === "todo" && m.date === null)).toBe(true)
+    expect(log).toEqual([])
+    expect(readNotebook("02").notes).toBe("")
+    expect(readAiProgress().lessons).toEqual({})
+  })
+
+  it("never spawns or kills anything", async () => {
+    expect(() => streamLab(["status"], "./lab status", new AbortController().signal)).toThrow(/read-only/)
+    expect(() => stopRun()).toThrow(/read-only/)
+    expect(() => stopApp()).toThrow(/read-only/)
+    await expect(labEnv()).rejects.toThrow(/read-only/)
+    await expect(startApp()).rejects.toThrow(/read-only/)
+    await expect(completeMission("01", "x")).rejects.toThrow(/read-only/)
+  })
+
+  it("ships the snapshot in content/ for both labs", () => {
+    delete process.env.DACOSPACE_LAB_DIR
+    delete process.env.DACOSPACE_AI_LAB_DIR
+    expect(labAvailable()).toBe(true)
+    expect(aiLabAvailable()).toBe(true)
     expect(questionSources().map((s) => s.track)).toEqual(["systems", "ai"])
   })
 })

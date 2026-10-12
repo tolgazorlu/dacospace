@@ -112,7 +112,7 @@ export function rotation(bank: Question[]): Question[] {
 /** Hosted mode: the same question for every visitor on a date, nothing read from or written to disk. */
 export function hostedDay(date = today()): { day: Day; question: Question } {
   if (!DATE.test(date)) throw new Error(`bad date ${date}, expected YYYY-MM-DD`)
-  const order = rotation(loadQuestions("systems"))
+  const order = rotation(loadQuestions())
   const n = Math.floor(Date.parse(`${date}T00:00:00Z`) / 86_400_000)
   return { day: { date, questionId: order[n % order.length].id }, question: order[n % order.length] }
 }

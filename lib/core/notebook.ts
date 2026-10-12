@@ -1,6 +1,7 @@
 import fs from "node:fs"
 import path from "node:path"
 import { z } from "zod"
+import { isHosted } from "./hosted"
 import { dataDir } from "./paths"
 
 export const LAB_VERDICTS = ["revisit", "pass"] as const
@@ -28,6 +29,7 @@ const file = (nn: string) => {
 
 export function readNotebook(nn: string): Notebook {
   const f = file(nn)
+  if (isHosted()) return Notebook.parse({ nn })
   return fs.existsSync(f) ? Notebook.parse(JSON.parse(fs.readFileSync(f, "utf8"))) : Notebook.parse({ nn })
 }
 

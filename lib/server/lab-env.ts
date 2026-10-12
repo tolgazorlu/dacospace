@@ -5,6 +5,7 @@ import path from "node:path"
 import { promisify } from "node:util"
 import { dataDir, labDir } from "@/lib/core/paths"
 import { childEnv } from "./child-env"
+import { assertLocal } from "./guard"
 
 const exec = promisify(execFile)
 
@@ -62,6 +63,7 @@ async function services(): Promise<{ docker: LabEnv["docker"]; services: Service
 }
 
 export async function labEnv(): Promise<LabEnv> {
+  assertLocal()
   const [svc, healthy] = await Promise.all([services(), ok(`${APP_URL}/actuator/health`)])
   const pid = ownedPid()
   return { ...svc, app: healthy ? "up" : pid ? "starting" : "down", appOwned: Boolean(pid) }
@@ -69,6 +71,7 @@ export async function labEnv(): Promise<LabEnv> {
 
 /** Starts `./lab run` in the background, detached, logging to data/lab/app.log. */
 export async function startApp(): Promise<void> {
+  assertLocal()
   if (await ok(`${APP_URL}/actuator/health`)) return
   if (ownedPid()) return
   fs.mkdirSync(path.dirname(pidFile()), { recursive: true })
@@ -86,6 +89,7 @@ export async function startApp(): Promise<void> {
 
 /** Stops the app only if dacospace started it; an app started in a terminal is left alone. */
 export function stopApp(): boolean {
+  assertLocal()
   const pid = ownedPid()
   if (!pid) return false
   try {
@@ -108,5 +112,6 @@ export function appLogTail(lines = 60): string {
 
 /** Runs ./lab done NN "sentence" so PROGRESS.md stays the single source of truth. */
 export async function completeMission(nn: string, takeaway: string): Promise<void> {
+  assertLocal()
   await exec(path.join(labDir(), "lab"), ["done", nn, takeaway], { cwd: labDir(), timeout: 15000 })
 }
