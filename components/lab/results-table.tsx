@@ -1,4 +1,5 @@
 import type { RunResult } from "@/lib/core/lab"
+import { getT } from "@/lib/i18n/server"
 
 const ms = (v: number | null) => (v === null ? "–" : v >= 1000 ? `${(v / 1000).toFixed(2)} s` : `${v.toFixed(v < 10 ? 1 : 0)} ms`)
 const time = (at: string) => {
@@ -7,9 +8,10 @@ const time = (at: string) => {
 }
 
 /** Latest k6 runs, each compared with the previous run of the same scenario. */
-export function ResultsTable({ results }: { results: RunResult[] }) {
+export async function ResultsTable({ results }: { results: RunResult[] }) {
+  const t = await getT()
   if (!results.length) {
-    return <p className="mt-2 text-sm text-muted-foreground">No load test results yet. Run one from the mission.</p>
+    return <p className="mt-2 text-sm text-muted-foreground">{t.results.empty}</p>
   }
   const prevP95 = (i: number) => results.slice(i + 1).find((r) => r.scenario === results[i].scenario)?.p95 ?? null
   return (
@@ -17,12 +19,12 @@ export function ResultsTable({ results }: { results: RunResult[] }) {
       <table className="w-full text-xs tabular-nums">
         <thead className="text-left text-muted-foreground">
           <tr>
-            <th className="py-1.5 pr-3 font-normal">At</th>
-            <th className="py-1.5 pr-3 font-normal">Scenario</th>
+            <th className="py-1.5 pr-3 font-normal">{t.results.at}</th>
+            <th className="py-1.5 pr-3 font-normal">{t.results.scenario}</th>
             <th className="py-1.5 pr-3 text-right font-normal">req/s</th>
             <th className="py-1.5 pr-3 text-right font-normal">p95</th>
-            <th className="py-1.5 pr-3 text-right font-normal">failed</th>
-            <th className="py-1.5 text-right font-normal">dropped</th>
+            <th className="py-1.5 pr-3 text-right font-normal">{t.results.failed}</th>
+            <th className="py-1.5 text-right font-normal">{t.results.dropped}</th>
           </tr>
         </thead>
         <tbody className="divide-y">
@@ -37,7 +39,7 @@ export function ResultsTable({ results }: { results: RunResult[] }) {
                   {r.targetRps ? <span className="text-muted-foreground"> @{r.targetRps}</span> : null}
                   {r.accepted !== null && (
                     <span className="block text-[0.6875rem] text-muted-foreground">
-                      {r.accepted} accepted · {r.rejected ?? 0} rejected
+                      {t.results.acceptedRejected(r.accepted, r.rejected ?? 0)}
                     </span>
                   )}
                 </td>

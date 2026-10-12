@@ -2,8 +2,10 @@ import Link from "next/link"
 import { LabMissing } from "@/components/lab/lab-missing"
 import { currentMission, labAvailable, readProgress } from "@/lib/core/lab"
 import { isHosted } from "@/lib/core/hosted"
+import { getT } from "@/lib/i18n/server"
 
-export default function LabPage() {
+export default async function LabPage() {
+  const t = await getT()
   if (!labAvailable()) return <LabMissing />
   const { missions, log } = readProgress()
   const current = currentMission(missions)
@@ -11,11 +13,9 @@ export default function LabPage() {
   const hosted = isHosted()
   return (
     <>
-      <h1 className="text-3xl font-semibold tracking-tight">Scale Lab</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">{t.lab.title}</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        {hosted ? "" : `${done} of ${missions.length} done · `}{missions.filter((m) => m.missionFile).length} missions and{" "}
-        {missions.filter((m) => m.lessonFile).length} lessons written. A naive Java ordering service, one defect a day:
-        measure it, fix it, prove it.
+        {t.lab.summary(hosted ? null : done, missions.length, missions.filter((m) => m.missionFile).length, missions.filter((m) => m.lessonFile).length)}
       </p>
       <ol className="mt-10 divide-y">
         {missions.map((m) => {
@@ -31,7 +31,7 @@ export default function LabPage() {
                   <span className="mt-0.5 block text-sm text-muted-foreground">{m.concept}</span>
                 </span>
                 <span className={`shrink-0 text-sm ${isCurrent ? "font-medium text-foreground" : "text-muted-foreground"}`}>
-                  {m.status === "done" ? (m.date ?? "done") : isCurrent ? "today" : m.missionFile ? "ready" : m.lessonFile ? "lesson only" : "not written"}
+                  {m.status === "done" ? (m.date ?? t.lab.done) : isCurrent ? t.lab.today : m.missionFile ? t.lab.ready : m.lessonFile ? t.lab.lessonOnly : t.lab.notWritten}
                 </span>
               </Link>
             </li>
@@ -40,7 +40,7 @@ export default function LabPage() {
       </ol>
       {log.length > 0 && (
         <section className="mt-16">
-          <h2 className="mb-4 text-sm font-semibold">What you said you learned</h2>
+          <h2 className="mb-4 text-sm font-semibold">{t.lab.learned}</h2>
           <ol className="space-y-3">
             {[...log].reverse().map((l, i) => (
               <li key={i} className="flex gap-4 text-sm">

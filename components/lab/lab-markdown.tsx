@@ -5,6 +5,7 @@ import remarkGfm from "remark-gfm"
 import { Play } from "lucide-react"
 import { parseLabLine } from "@/lib/core/lab-commands"
 import { useConsole } from "./console-context"
+import { useT } from "@/components/i18n"
 
 type Hast = { type: string; value?: string; tagName?: string; properties?: Record<string, unknown>; children?: Hast[] }
 
@@ -12,6 +13,7 @@ const textOf = (n: Hast): string => (n.type === "text" ? (n.value ?? "") : (n.ch
 
 function RunnableLine({ line, scenarios }: { line: string; scenarios: string[] }) {
   const { run, busy } = useConsole()
+  const t = useT()
   const cmd = parseLabLine(line, scenarios)
   if (!cmd) return <div className="min-h-[1lh]">{line}</div>
   return (
@@ -22,9 +24,9 @@ function RunnableLine({ line, scenarios }: { line: string; scenarios: string[] }
         onClick={() => run(line)}
         disabled={busy}
         className="inline-flex shrink-0 items-center gap-1 rounded-sm px-1.5 py-0.5 font-sans text-xs font-medium text-foreground underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:font-normal disabled:text-muted-foreground disabled:no-underline"
-        aria-label={`Run ${line}`}
+        aria-label={t.lab.runLine(line)}
       >
-        <Play className="size-3" aria-hidden /> Run
+        <Play className="size-3" aria-hidden /> {t.lab.run}
       </button>
     </div>
   )

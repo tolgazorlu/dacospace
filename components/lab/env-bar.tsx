@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
+import { useT } from "@/components/i18n"
 import { HEADERS, useConsole } from "./console-context"
 
 type Env = {
@@ -28,6 +29,7 @@ export function EnvBar() {
   const [env, setEnv] = useState<Env | null>(null)
   const [showLog, setShowLog] = useState(false)
   const [pending, setPending] = useState(false)
+  const t = useT()
 
   const refresh = useCallback(async () => {
     const res = await fetch(`/api/lab/env${showLog ? "?log" : ""}`, { cache: "no-store", headers: HEADERS })
@@ -50,28 +52,28 @@ export function EnvBar() {
     setPending(false)
   }
 
-  if (!env) return <p className="text-sm text-muted-foreground">Checking the lab environment…</p>
+  if (!env) return <p className="text-sm text-muted-foreground">{t.env.checking}</p>
 
   const infraUp = env.services.length > 0 && env.services.every((s) => s.state === "running")
   return (
-    <section aria-label="Lab environment" className="text-sm">
-      <h2 className="text-sm font-semibold">Environment</h2>
+    <section aria-label={t.env.label} className="text-sm">
+      <h2 className="text-sm font-semibold">{t.env.title}</h2>
       <ul className="mt-2 space-y-1.5">
         {env.docker === "stopped" ? (
           <li className="flex items-center gap-2 text-muted-foreground">
-            <Dot on={false} /> Docker is not running. Open Docker Desktop first.
+            <Dot on={false} /> {t.env.dockerOff}
           </li>
         ) : (
           <li className="flex items-center gap-2">
             <Dot on={infraUp} />
             <span className={infraUp ? "" : "text-muted-foreground"}>
               {env.services.length === 0
-                ? "Infrastructure is stopped"
+                ? t.env.infraStopped
                 : env.services.map((s) => `${LABELS[s.name] ?? s.name}${s.state === "running" ? "" : ` (${s.state})`}`).join(" · ")}
             </span>
             {!infraUp && (
               <Button size="xs" variant="outline" className="ml-auto" disabled={busy} onClick={() => run("./lab up")}>
-                Start
+                {t.env.start}
               </Button>
             )}
           </li>
@@ -79,33 +81,33 @@ export function EnvBar() {
         <li className="flex items-center gap-2">
           <Dot on={env.app === "up"} warn={env.app === "starting"} />
           <span className={env.app === "up" ? "" : "text-muted-foreground"}>
-            App on :4180 {env.app === "up" ? "is up" : env.app === "starting" ? "is starting…" : "is stopped"}
+            {t.env.app(env.app)}
           </span>
           <span className="ml-auto flex gap-1">
             {env.app === "down" && (
               <Button size="xs" variant="outline" disabled={pending || !infraUp} onClick={() => app("start-app")}>
-                Start
+                {t.env.start}
               </Button>
             )}
             {env.app !== "down" && env.appOwned && (
               <Button size="xs" variant="ghost" disabled={pending} onClick={() => app("stop-app")}>
-                Stop
+                {t.env.stop}
               </Button>
             )}
             {(env.appOwned || env.app !== "down") && (
               <Button size="xs" variant="ghost" onClick={() => setShowLog((s) => !s)}>
-                {showLog ? "Hide log" : "Log"}
+                {showLog ? t.env.hideLog : t.env.log}
               </Button>
             )}
           </span>
         </li>
       </ul>
       {env.app === "up" && !env.appOwned && (
-        <p className="mt-1.5 text-xs text-muted-foreground">Started outside dacospace. Restart it in that terminal.</p>
+        <p className="mt-1.5 text-xs text-muted-foreground">{t.env.outside}</p>
       )}
       {showLog && (
         <pre className="mt-2 max-h-56 overflow-auto rounded-md bg-muted p-2 font-mono text-[0.6875rem] leading-snug whitespace-pre-wrap">
-          {env.log || "No log yet. The app log appears here when dacospace starts the app."}
+          {env.log || t.env.noLog}
         </pre>
       )}
       <p className="mt-3 flex gap-4 text-xs text-muted-foreground">

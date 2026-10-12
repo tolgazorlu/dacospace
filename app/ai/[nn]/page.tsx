@@ -8,9 +8,13 @@ import { Button } from "@/components/ui/button"
 import { aiLabAvailable, getAiLesson, getCase, readAiProgress, readAiRoadmap } from "@/lib/core/ai-lab"
 import { aiLessonPrompt } from "@/lib/core/prompts"
 import { isHosted } from "@/lib/core/hosted"
+import { getLang } from "@/lib/i18n/server"
+import { messages } from "@/lib/i18n/messages"
 
 export default async function AiLessonPage({ params }: PageProps<"/ai/[nn]">) {
   const { nn } = await params
+  const lang = await getLang()
+  const t = messages(lang)
   if (!aiLabAvailable()) return <AiMissing />
   const rows = readAiRoadmap()
   const row = rows.find((r) => r.nn === nn)
@@ -31,22 +35,21 @@ export default async function AiLessonPage({ params }: PageProps<"/ai/[nn]">) {
   return (
     <article>
       <p className="text-sm text-muted-foreground">
-        AI lesson {nn} · {row.module}
-        {lesson?.meta["reading time"] && ` · ${lesson.meta["reading time"]}`}
+        {t.ai.lessonKicker(nn, row.module, lesson?.meta["reading time"] && t.common.duration(lesson.meta["reading time"]))}
       </p>
       <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance">{lesson?.title ?? row.title}</h1>
       <p className="mt-3 text-muted-foreground">{lesson?.meta.concepts ?? row.concepts}</p>
 
       {!lesson ? (
-        <p className="mt-8 text-muted-foreground">This lesson is on the roadmap but not written yet.</p>
+        <p className="mt-8 text-muted-foreground">{t.ai.lessonNotWritten}</p>
       ) : (
         <>
           {!hosted && (
             <div className="mt-8">
               <PromptCard
-                title="Study it with your AI"
-                description="Your assistant reads the lesson and its incident files, then quizzes you and challenges your decisions instead of summarising."
-                prompt={aiLessonPrompt(nn, lesson.title)}
+                title={t.ai.studyTitle}
+                description={t.ai.studyDescription}
+                prompt={aiLessonPrompt(nn, lesson.title, lang)}
               />
             </div>
           )}
@@ -56,7 +59,7 @@ export default async function AiLessonPage({ params }: PageProps<"/ai/[nn]">) {
 
           {cases.length > 0 && (
             <section className="mt-14 border-t pt-8">
-              <h2 className="text-sm font-semibold">Incident files for this lesson</h2>
+              <h2 className="text-sm font-semibold">{t.ai.lessonCases}</h2>
               <ul className="mt-3 space-y-2 text-sm">
                 {cases.map((c) => (
                   <li key={c.slug}>
@@ -73,10 +76,10 @@ export default async function AiLessonPage({ params }: PageProps<"/ai/[nn]">) {
           {!hosted && (
             <div className="mt-12 flex flex-wrap items-center gap-4 border-t pt-8">
               {read ? (
-                <span className="text-sm text-muted-foreground">Marked as read.</span>
+                <span className="text-sm text-muted-foreground">{t.ai.markedRead}</span>
               ) : (
                 <form action={aiLessonReadAction.bind(null, nn)}>
-                  <Button type="submit">I&apos;ve read it and answered the check question</Button>
+                  <Button type="submit">{t.ai.markRead}</Button>
                 </form>
               )}
             </div>

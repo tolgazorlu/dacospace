@@ -6,18 +6,13 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { saveAnswerAction } from "@/app/actions"
 import { saveLocalAnswer, useLocalAnswers } from "@/lib/client/answers"
+import { useT } from "@/components/i18n"
 import { DACOSPACE_REPO } from "@/lib/core/prompts"
 import type { Day } from "@/lib/core/days"
 import type { Question } from "@/lib/core/questions"
 
-const SCAFFOLD = `Requirements:
-Estimates:
-API:
-Data model:
-High-level design:
-Deep dive:`
-
 function Timer({ minutes }: { minutes: number }) {
+  const t = useT()
   const [left, setLeft] = useState(minutes * 60)
   const [running, setRunning] = useState(false)
   useEffect(() => {
@@ -33,10 +28,10 @@ function Timer({ minutes }: { minutes: number }) {
         aria-live="off"
         className={`font-mono text-sm tabular-nums ${left <= 0 ? "font-semibold text-foreground" : left < 300 ? "font-medium text-foreground" : "text-muted-foreground"}`}
       >
-        {left <= 0 ? "Time is up" : `${mm}:${ss}`}
+        {left <= 0 ? t.session.timeUp : `${mm}:${ss}`}
       </span>
       <Button size="sm" variant="outline" onClick={() => setRunning((r) => !r)} disabled={left <= 0}>
-        {running ? "Pause" : left === minutes * 60 ? "Start the clock" : "Resume"}
+        {running ? t.session.pause : left === minutes * 60 ? t.session.startClock : t.session.resume}
       </Button>
     </div>
   )
@@ -65,6 +60,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 /** hosted: the answer lives in this browser (localStorage) instead of data/days on the server. */
 export function Session({ day, question, hosted = false }: { day: Day; question: Question; hosted?: boolean }) {
+  const t = useT()
   const [asked, setAsked] = useState(0)
   const [draft, setDraft] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -85,7 +81,7 @@ export function Session({ day, question, hosted = false }: { day: Day; question:
       return
     }
     const text = answer.trim()
-    if (!text) return setError("Write something before saving.")
+    if (!text) return setError(t.session.empty)
     saveLocalAnswer(day.date, question.id, text)
     setDraft(null)
     setError(null)
@@ -95,62 +91,62 @@ export function Session({ day, question, hosted = false }: { day: Day; question:
 
   return (
     <>
-      <Section title="Ask the interviewer">
+      <Section title={t.session.ask}>
         {clarifications.length > 0 && <Bullets items={clarifications} />}
         {left > 0 && (
           <Button variant="ghost" size="sm" className="-ml-2.5 mt-2" onClick={() => setAsked((n) => n + 1)}>
-            Ask a clarifying question <span className="text-muted-foreground tabular-nums">({left} left)</span>
+            {t.session.askButton} <span className="text-muted-foreground tabular-nums">{t.session.left(left)}</span>
           </Button>
         )}
         {!answered && asked === 0 && (
           <p className="mt-1 text-sm text-muted-foreground">
-            A real interviewer expects you to ask first. Each click reveals one answer.
+            {t.session.askHint}
           </p>
         )}
       </Section>
 
-      <Section title="Your design">
+      <Section title={t.session.design}>
         {!answered && <Timer minutes={question.minutes} />}
         <Textarea
           value={answer}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder={SCAFFOLD}
+          placeholder={t.session.scaffold}
           className="mt-4 min-h-72 resize-y font-mono text-sm leading-relaxed"
-          aria-label="Your design"
+          aria-label={t.session.design}
         />
         <div className="mt-3 flex items-center gap-3">
           <Button disabled={pending || !dirty} onClick={submit}>
-            {pending ? "Saving" : answered ? "Update answer" : "Submit answer"}
+            {pending ? t.session.saving : answered ? t.session.update : t.session.submit}
           </Button>
           {error && <span role="alert" className="text-sm font-medium">{error}</span>}
-          {!error && answered && !dirty && <span className="text-sm text-muted-foreground">Saved</span>}
+          {!error && answered && !dirty && <span className="text-sm text-muted-foreground">{t.common.saved}</span>}
         </div>
       </Section>
 
       {answered && (
-        <Section title="The interviewer follows up">
+        <Section title={t.session.followUps}>
           <Bullets items={question.followUps} />
         </Section>
       )}
 
       {answered && (
-        <Section title="How it is scored">
+        <Section title={t.session.scored}>
           {showRubric ? (
             <>
               <Bullets items={question.rubric} />
-              <h3 className="mb-3 mt-8 text-sm font-semibold">Common mistakes</h3>
+              <h3 className="mb-3 mt-8 text-sm font-semibold">{t.session.mistakes}</h3>
               <Bullets items={question.pitfalls} />
             </>
           ) : (
             <Button variant="outline" size="sm" onClick={() => setShowRubric(true)}>
-              Show the rubric
+              {t.session.showRubric}
             </Button>
           )}
         </Section>
       )}
 
       {day.review && (
-        <Section title={`Review: ${day.review.verdict}`}>
+        <Section title={t.session.review(day.review.verdict)}>
           <div className="prose-daco">
             <Markdown>{day.review.notes}</Markdown>
           </div>
@@ -159,10 +155,9 @@ export function Session({ day, question, hosted = false }: { day: Day; question:
 
       {hosted && (
         <p className="mt-16 text-sm text-muted-foreground">
-          Your answers stay in this browser. For an AI interviewer that reviews your design, run dacospace on your machine
-          with its MCP server:{" "}
+          {t.session.hostedHint}{" "}
           <a href={DACOSPACE_REPO.replace(/\.git$/, "")} className="underline underline-offset-4">
-            setup on GitHub
+            {t.common.setupOnGitHub}
           </a>
           .
         </p>
@@ -170,8 +165,7 @@ export function Session({ day, question, hosted = false }: { day: Day; question:
 
       {!hosted && !day.review && (
         <p className="mt-16 text-sm text-muted-foreground">
-          Want a real interviewer? In your AI client, run the <code>mock_interview</code> prompt from the
-          dacospace MCP server. Its review shows up here.
+          {t.session.localHintA} <code>mock_interview</code> {t.session.localHintB}
         </p>
       )}
     </>

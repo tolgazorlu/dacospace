@@ -15,6 +15,8 @@ import { PromptCard } from "@/components/prompt-card"
 import { labEnv } from "@/lib/server/lab-env"
 import { DACOSPACE_REPO } from "@/lib/core/prompts"
 import { isHosted } from "@/lib/core/hosted"
+import { getLang } from "@/lib/i18n/server"
+import { messages } from "@/lib/i18n/messages"
 import Markdown from "react-markdown"
 
 /** The evidence table to prefill the notebook with, minus the sentence that introduces it. */
@@ -29,6 +31,8 @@ const NOTEBOOK_SECTIONS = /^(\d+\.\s*)?(Evidence|In your own words|Check questio
 
 export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
   const { nn } = await params
+  const lang = await getLang()
+  const t = messages(lang)
   if (!labAvailable()) return <LabMissing />
   const { missions, log } = readProgress()
   const row = missions.find((m) => m.nn === nn)
@@ -43,17 +47,16 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
   if (!mission) {
     return (
       <article>
-        <p className="text-sm text-muted-foreground">Mission {nn} · {row.concept}</p>
+        <p className="text-sm text-muted-foreground">{t.lab.mission(nn)} · {row.concept}</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance">{row.title}</h1>
         <p className="mt-8 text-muted-foreground">
-          This mission is on the roadmap but not written yet. Missions ship one at a time, after they have been measured on a
-          real machine.{isHosted() ? " " : <> Run <code>git pull</code> in java-scale-lab to get new ones. </>}Meanwhile, the
-          lesson for it may already be there.
+          {t.lab.notWrittenYet} {isHosted() ? "" : `${t.lab.pullHint} `}
+          {t.lab.lessonMayExist}
         </p>
         {lesson && (
           <p className="mt-6">
             <Link href={`/lesson/${nn}`} className="font-medium underline underline-offset-4">
-              Read lesson {nn}: {lesson.title}
+              {t.lab.readLesson(nn, lesson.title)}
             </Link>
           </p>
         )}
@@ -65,24 +68,22 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
     return (
       <article>
         <p className="text-sm text-muted-foreground">
-          Mission {nn}
-          {mission.meta.time && ` · ${mission.meta.time}`}
+          {t.lab.mission(nn)}
+          {mission.meta.time && ` · ${t.common.duration(mission.meta.time)}`}
         </p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance">{mission.title}</h1>
         {mission.meta.concept && <p className="mt-3 text-muted-foreground">{mission.meta.concept}</p>}
         {lesson && (
           <p className="mt-4 text-sm">
             <Link href={`/lesson/${nn}`} className="font-medium underline underline-offset-4">
-              Read lesson {nn} first: {lesson.title} ({lesson.meta["reading time"] ?? "10-15 min"})
+              {t.lab.readLessonFirst(nn, lesson.title, t.common.duration(lesson.meta["reading time"] ?? "10-15 min"))}
             </Link>
           </p>
         )}
         <p className="mt-8 rounded-lg border p-4 text-sm text-muted-foreground">
-          You are reading the mission. Its <code>./lab</code> commands run against a Java service, Postgres and k6 on
-          your own machine: start dacospace locally to get Run buttons, live Grafana panels, load test results and a
-          notebook.{" "}
+          {t.lab.hostedNote}{" "}
           <a href={DACOSPACE_REPO.replace(/\.git$/, "")} className="text-foreground underline underline-offset-4">
-            Setup on GitHub
+            {t.common.setupOnGitHub}
           </a>
           .
         </p>
@@ -108,7 +109,7 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
           <p className="text-sm text-muted-foreground">
             Mission {nn}
             {mission.meta.time && ` · ${mission.meta.time}`}
-            {done && row.date && ` · done ${row.date}`}
+            {done && row.date && t.lab.doneOn(row.date)}
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance">{mission.title}</h1>
           {mission.meta.concept && <p className="mt-3 text-muted-foreground">{mission.meta.concept}</p>}
@@ -116,11 +117,11 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
             <p className="mt-4 text-sm">
               {notebook.lessonReadAt ? (
                 <Link href={`/lesson/${nn}`} className="text-muted-foreground hover:text-foreground">
-                  Reread lesson {nn}: {lesson.title}
+                  {t.lab.rereadLesson(nn, lesson.title)}
                 </Link>
               ) : (
                 <Link href={`/lesson/${nn}`} className="font-medium underline underline-offset-4">
-                  Read lesson {nn} first: {lesson.title} ({lesson.meta["reading time"] ?? "10-15 min"})
+                  {t.lab.readLessonFirst(nn, lesson.title, t.common.duration(lesson.meta["reading time"] ?? "10-15 min"))}
                 </Link>
               )}
             </p>
@@ -128,9 +129,9 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
 
           <div className="mt-8">
             <PromptCard
-              title={`Do mission ${nn} with your AI`}
-              description={`Gets the lab if you do not have it, offers a fresh start at mission ${nn} (earlier missions solved), then mentors you without giving the answer.`}
-              prompt={missionPrompt(nn, mission.title)}
+              title={t.lab.promptTitle(nn)}
+              description={t.lab.promptDescription(nn)}
+              prompt={missionPrompt(nn, mission.title, lang)}
             />
           </div>
 
@@ -139,7 +140,7 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
           </div>
 
           <section className="mt-14 border-t pt-10">
-            <h2 className="mb-6 text-xl font-semibold tracking-tight">Notebook</h2>
+            <h2 className="mb-6 text-xl font-semibold tracking-tight">{t.lab.notebook}</h2>
             <Notebook
               nn={nn}
               initial={notebook}
@@ -149,7 +150,7 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
             />
             {takeaway && (
               <p className="mt-6 text-sm text-muted-foreground">
-                Logged in PROGRESS.md on {takeaway.date}: “{takeaway.text}”
+                {t.lab.loggedIn(takeaway.date, takeaway.text)}
               </p>
             )}
           </section>
@@ -157,7 +158,7 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
           {notebook.review && (
             <section className="mt-12">
               <h2 className="mb-4 text-sm font-semibold">
-                Mentor review: {notebook.review.verdict === "pass" ? "pass" : "revisit"}
+                {t.lab.mentorReview(notebook.review.verdict === "pass" ? "pass" : "revisit")}
               </h2>
               <div className="prose-daco">
                 <Markdown>{notebook.review.notes}</Markdown>
@@ -166,8 +167,7 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
           )}
           {!notebook.review && (
             <p className="mt-12 text-sm text-muted-foreground">
-              Want feedback? Copy the prompt at the top of this mission into your AI assistant, or run the{" "}
-              <code>lab_mentor</code> prompt if dacospace is connected over MCP. A saved review shows up here.
+              {t.lab.wantFeedbackA} <code>lab_mentor</code> {t.lab.wantFeedbackB}
             </p>
           )}
 
@@ -181,9 +181,9 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
           <EnvBar />
           <Console />
           <LivePanels grafanaUp={grafanaUp} />
-          <section aria-label="Load test results">
-            <h2 className="text-sm font-semibold">Results</h2>
-            <p className="mt-0.5 text-xs text-muted-foreground">Latest k6 runs. The % under p95 compares with the previous run of the same scenario.</p>
+          <section aria-label={t.lab.results}>
+            <h2 className="text-sm font-semibold">{t.lab.results}</h2>
+            <p className="mt-0.5 text-xs text-muted-foreground">{t.lab.resultsHint}</p>
             <ResultsTable results={listResults(10)} />
           </section>
         </aside>

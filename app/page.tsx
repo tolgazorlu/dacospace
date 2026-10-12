@@ -1,5 +1,8 @@
 import Link from "next/link"
 import { dayView } from "@/lib/core/days"
+import { localize } from "@/lib/core/questions"
+import { getLang } from "@/lib/i18n/server"
+import { messages } from "@/lib/i18n/messages"
 import { isHosted } from "@/lib/core/hosted"
 import { aiLabAvailable, getAiLesson, nextAiLesson, readAiProgress, readAiRoadmap } from "@/lib/core/ai-lab"
 import { currentMission, getLesson, getMission, labAvailable, readProgress } from "@/lib/core/lab"
@@ -7,7 +10,7 @@ import { readNotebook } from "@/lib/core/notebook"
 import { setupPrompt } from "@/lib/core/prompts"
 import { PromptCard } from "@/components/prompt-card"
 
-const longDate = () => new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })
+const longDate = (locale: string) => new Date().toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" })
 
 function Step({
   n,
@@ -43,8 +46,12 @@ function Step({
   )
 }
 
-export default function TodayPage() {
-  const { day, question } = dayView()
+export default async function TodayPage() {
+  const lang = await getLang()
+  const t = messages(lang)
+  const view = dayView()
+  const day = view.day
+  const question = localize(view.question, lang)
   const hosted = isHosted()
   const lab = labAvailable()
   const progress = lab ? readProgress() : null
@@ -65,48 +72,46 @@ export default function TodayPage() {
     <>
       {!hosted && (
         <PromptCard
-          title="Set up the lab with your AI"
-          description="Paste into Claude Code, Codex, Cursor or any coding assistant. It clones both repos, installs, connects MCP, and mentors you without giving away answers."
-          prompt={setupPrompt()}
+          title={t.today.setupTitle}
+          description={t.today.setupDescription}
+          prompt={setupPrompt(lang)}
         />
       )}
-      <p className={`${hosted ? "" : "mt-12 "}text-sm text-muted-foreground`}>{longDate()}</p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight">Today</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Read the concept, break it on a real system, then defend a design out loud.
-      </p>
+      <p className={`${hosted ? "" : "mt-12 "}text-sm text-muted-foreground`}>{longDate(t.dateLocale)}</p>
+      <h1 className="mt-2 text-3xl font-semibold tracking-tight">{t.today.title}</h1>
+      <p className="mt-2 text-sm text-muted-foreground">{t.today.subtitle}</p>
       <ol className="mt-8 divide-y">
         {[
           m && lesson && {
             href: `/lesson/${m.nn}`,
-            kind: `Lesson ${m.nn} · ${lesson.meta["reading time"] ?? "10-15 min"}`,
+            kind: t.today.lesson(m.nn, t.common.duration(lesson.meta["reading time"] ?? "10-15 min")),
             title: lesson.title,
             detail: lesson.meta.concept ?? m.concept,
-            state: lessonRead ? "read" : "start here",
+            state: lessonRead ? t.today.read : t.today.startHere,
             highlight: !lessonRead,
           },
           m && {
             href: `/lab/${m.nn}`,
-            kind: `Mission ${m.nn} of ${progress!.missions.length}${mission?.meta.time ? ` · ${mission.meta.time}` : ""}`,
+            kind: t.today.mission(m.nn, progress!.missions.length, mission?.meta.time && t.common.duration(mission.meta.time)),
             title: mission?.title ?? m.title,
-            detail: mission ? m.concept : "Not written yet. Pull java-scale-lab for new missions.",
-            state: hosted ? "" : missionDone ? "done" : nb?.takeaway || nb?.notes ? "in progress" : `${done} of ${progress!.missions.length} done`,
+            detail: mission ? m.concept : t.today.notWritten,
+            state: hosted ? "" : missionDone ? t.today.done : nb?.takeaway || nb?.notes ? t.today.inProgress : t.today.doneOf(done, progress!.missions.length),
             highlight: lessonRead && !missionDone,
           },
           ai && aiLesson && {
             href: `/ai/${ai.nn}`,
-            kind: `AI lesson ${ai.nn} · ${aiLesson.meta["reading time"] ?? "15-20 min"}`,
+            kind: t.today.aiLesson(ai.nn, t.common.duration(aiLesson.meta["reading time"] ?? "15-20 min")),
             title: aiLesson.title,
             detail: ai.concepts,
-            state: hosted ? "" : aiProgress?.lessons[ai.nn] ? "read" : `${aiRead} of ${aiRows.length} read`,
+            state: hosted ? "" : aiProgress?.lessons[ai.nn] ? t.today.read : t.today.readOf(aiRead, aiRows.length),
             highlight: missionDone && !aiProgress?.lessons[ai.nn],
           },
           {
             href: "/interview",
-            kind: `Interview · ${question.track === "ai" ? "AI · " : ""}${question.level} · ${question.minutes} min`,
+            kind: t.today.interview(question.track === "ai", question.level, question.minutes),
             title: question.title,
-            detail: question.topics.filter((t) => t !== "ai").join(", "),
-            state: hosted ? "today" : day.review ? day.review.verdict : day.answer ? "answered" : "open",
+            detail: question.topics.filter((x) => x !== "ai").join(", "),
+            state: hosted ? t.today.today : day.review ? day.review.verdict : day.answer ? t.today.answered : t.today.open,
             highlight: missionDone && !day.answer,
           },
         ]
@@ -117,14 +122,13 @@ export default function TodayPage() {
       </ol>
       {hosted && (
         <p className="mt-10 text-sm text-muted-foreground">
-          This is the hosted demo: read every lesson, mission and incident file, and answer the interview question (your
-          answers stay in this browser). Running the lab commands needs your own machine:{" "}
-          <Link href="/lab/01" className="underline underline-offset-4">see a mission</Link>.
+          {t.today.hostedNote}{" "}
+          <Link href="/lab/01" className="underline underline-offset-4">{t.today.seeMission}</Link>.
         </p>
       )}
       {!lab && !hosted && (
         <p className="mt-10 text-sm text-muted-foreground">
-          The lab is not connected. <Link href="/lab" className="underline underline-offset-4">Set it up</Link>.
+          {t.today.labMissing} <Link href="/lab" className="underline underline-offset-4">{t.today.setItUp}</Link>.
         </p>
       )}
     </>

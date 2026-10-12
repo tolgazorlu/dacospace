@@ -8,9 +8,11 @@ import { lessonReadAction } from "@/app/lab-actions"
 import { getLesson, getMission, labAvailable } from "@/lib/core/lab"
 import { readNotebook } from "@/lib/core/notebook"
 import { isHosted } from "@/lib/core/hosted"
+import { getT } from "@/lib/i18n/server"
 
 export default async function LessonPage({ params }: PageProps<"/lesson/[nn]">) {
   const { nn } = await params
+  const t = await getT()
   if (!labAvailable()) return <LabMissing />
   const lesson = getLesson(nn)
   if (!lesson) notFound()
@@ -19,8 +21,8 @@ export default async function LessonPage({ params }: PageProps<"/lesson/[nn]">) 
   return (
     <article>
       <p className="text-sm text-muted-foreground">
-        Lesson {nn}
-        {lesson.meta["reading time"] && ` · ${lesson.meta["reading time"]}`}
+        {t.lesson.title(nn)}
+        {lesson.meta["reading time"] && ` · ${t.common.duration(lesson.meta["reading time"])}`}
       </p>
       <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance">{lesson.title}</h1>
       {lesson.meta.concept && <p className="mt-3 text-muted-foreground">{lesson.meta.concept}</p>}
@@ -30,14 +32,14 @@ export default async function LessonPage({ params }: PageProps<"/lesson/[nn]">) 
       <div className="mt-14 flex flex-wrap items-center gap-4 border-t pt-8">
         {read || isHosted() ? (
           <Link href={`/lab/${nn}`} className="text-sm font-medium underline underline-offset-4">
-            Go to mission {nn}{mission ? `: ${mission.title}` : ""} →
+            {t.lesson.goToMission(nn, mission?.title ?? "")}
           </Link>
         ) : (
           <form action={lessonReadAction.bind(null, nn)}>
-            <Button type="submit">I&apos;ve read it, open the lab</Button>
+            <Button type="submit">{t.lesson.markRead}</Button>
           </form>
         )}
-        <span className="text-sm text-muted-foreground">Answer the check question in your head before you start the mission.</span>
+        <span className="text-sm text-muted-foreground">{t.lesson.checkHint}</span>
       </div>
     </article>
   )
