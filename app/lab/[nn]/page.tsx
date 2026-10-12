@@ -13,6 +13,8 @@ import { readNotebook } from "@/lib/core/notebook"
 import { missionPrompt } from "@/lib/core/prompts"
 import { PromptCard } from "@/components/prompt-card"
 import { labEnv } from "@/lib/server/lab-env"
+import { DACOSPACE_REPO } from "@/lib/core/prompts"
+import { isHosted } from "@/lib/core/hosted"
 import Markdown from "react-markdown"
 
 /** The evidence table to prefill the notebook with, minus the sentence that introduces it. */
@@ -45,8 +47,8 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance">{row.title}</h1>
         <p className="mt-8 text-muted-foreground">
           This mission is on the roadmap but not written yet. Missions ship one at a time, after they have been measured on a
-          real machine. Run <code>git pull</code> in java-scale-lab to get new ones. Meanwhile, the lesson for it may
-          already be there.
+          real machine.{isHosted() ? " " : <> Run <code>git pull</code> in java-scale-lab to get new ones. </>}Meanwhile, the
+          lesson for it may already be there.
         </p>
         {lesson && (
           <p className="mt-6">
@@ -55,6 +57,42 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
             </Link>
           </p>
         )}
+      </article>
+    )
+  }
+
+  if (isHosted()) {
+    return (
+      <article>
+        <p className="text-sm text-muted-foreground">
+          Mission {nn}
+          {mission.meta.time && ` · ${mission.meta.time}`}
+        </p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance">{mission.title}</h1>
+        {mission.meta.concept && <p className="mt-3 text-muted-foreground">{mission.meta.concept}</p>}
+        {lesson && (
+          <p className="mt-4 text-sm">
+            <Link href={`/lesson/${nn}`} className="font-medium underline underline-offset-4">
+              Read lesson {nn} first: {lesson.title} ({lesson.meta["reading time"] ?? "10-15 min"})
+            </Link>
+          </p>
+        )}
+        <p className="mt-8 rounded-lg border p-4 text-sm text-muted-foreground">
+          You are reading the mission. Its <code>./lab</code> commands run against a Java service, Postgres and k6 on
+          your own machine: start dacospace locally to get Run buttons, live Grafana panels, load test results and a
+          notebook.{" "}
+          <a href={DACOSPACE_REPO.replace(/\.git$/, "")} className="text-foreground underline underline-offset-4">
+            Setup on GitHub
+          </a>
+          .
+        </p>
+        <div className="mt-10">
+          <LabMarkdown source={mission.body} scenarios={[]} runnable={false} />
+        </div>
+        <nav className="mt-16 flex justify-between text-sm text-muted-foreground">
+          {prev ? <Link href={`/lab/${prev.nn}`} className="hover:text-foreground">← {prev.nn} {prev.title}</Link> : <span />}
+          {next ? <Link href={`/lab/${next.nn}`} className="hover:text-foreground">{next.nn} {next.title} →</Link> : <span />}
+        </nav>
       </article>
     )
   }

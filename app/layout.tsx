@@ -25,7 +25,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
       <body className="min-h-full">
-        <Shell>
+        <Shell hosted={hosted}>
           <header className="flex items-center justify-between gap-6 border-b py-6">
             <Link href="/" className="text-lg font-semibold tracking-tight">
               dacospace

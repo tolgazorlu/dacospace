@@ -30,17 +30,20 @@ function RunnableLine({ line, scenarios }: { line: string; scenarios: string[] }
   )
 }
 
-/** Mission markdown where every allowed `./lab ...` line in a code block gets a Run button. */
-export function LabMarkdown({ source, scenarios }: { source: string; scenarios: string[] }) {
+/**
+ * Mission markdown where every allowed `./lab ...` line in a code block gets a Run button.
+ * runnable=false (hosted demo) renders plain code with no buttons and no console.
+ */
+export function LabMarkdown({ source, scenarios, runnable = true }: { source: string; scenarios: string[]; runnable?: boolean }) {
   const components: Components = {
     pre({ node }) {
       const code = (node as unknown as Hast).children?.find((c) => c.tagName === "code")
       const text = code ? textOf(code).replace(/\n$/, "") : ""
       return (
         <pre className="my-4 overflow-x-auto rounded-md bg-muted px-3 py-2.5 font-mono text-[0.8125rem] leading-relaxed">
-          {text.split("\n").map((line, i) => (
-            <RunnableLine key={i} line={line} scenarios={scenarios} />
-          ))}
+          {text.split("\n").map((line, i) =>
+            runnable ? <RunnableLine key={i} line={line} scenarios={scenarios} /> : <div key={i} className="min-h-[1lh]">{line}</div>,
+          )}
         </pre>
       )
     },
