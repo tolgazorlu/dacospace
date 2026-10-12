@@ -1,23 +1,25 @@
 import Link from "next/link"
 import { LabMissing } from "@/components/lab/lab-missing"
 import { currentMission, labAvailable, readProgress } from "@/lib/core/lab"
+import { isHosted } from "@/lib/core/hosted"
 
 export default function LabPage() {
   if (!labAvailable()) return <LabMissing />
   const { missions, log } = readProgress()
   const current = currentMission(missions)
   const done = missions.filter((m) => m.status === "done").length
+  const hosted = isHosted()
   return (
     <>
       <h1 className="text-3xl font-semibold tracking-tight">Scale Lab</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        {done} of {missions.length} done · {missions.filter((m) => m.missionFile).length} missions and{" "}
+        {hosted ? "" : `${done} of ${missions.length} done · `}{missions.filter((m) => m.missionFile).length} missions and{" "}
         {missions.filter((m) => m.lessonFile).length} lessons written. A naive Java ordering service, one defect a day:
         measure it, fix it, prove it.
       </p>
       <ol className="mt-10 divide-y">
         {missions.map((m) => {
-          const isCurrent = m.nn === current?.nn && m.status !== "done"
+          const isCurrent = !hosted && m.nn === current?.nn && m.status !== "done"
           return (
             <li key={m.nn}>
               <Link href={`/lab/${m.nn}`} className="group flex items-baseline gap-4 py-3.5">

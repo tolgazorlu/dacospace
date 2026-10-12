@@ -7,6 +7,7 @@ import { LabMissing } from "@/components/lab/lab-missing"
 import { lessonReadAction } from "@/app/lab-actions"
 import { getLesson, getMission, labAvailable } from "@/lib/core/lab"
 import { readNotebook } from "@/lib/core/notebook"
+import { isHosted } from "@/lib/core/hosted"
 
 export default async function LessonPage({ params }: PageProps<"/lesson/[nn]">) {
   const { nn } = await params
@@ -27,7 +28,7 @@ export default async function LessonPage({ params }: PageProps<"/lesson/[nn]">) 
         <Markdown remarkPlugins={[remarkGfm]}>{lesson.body}</Markdown>
       </div>
       <div className="mt-14 flex flex-wrap items-center gap-4 border-t pt-8">
-        {read ? (
+        {read || isHosted() ? (
           <Link href={`/lab/${nn}`} className="text-sm font-medium underline underline-offset-4">
             Go to mission {nn}{mission ? `: ${mission.title}` : ""} →
           </Link>
