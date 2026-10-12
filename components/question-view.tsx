@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge"
 import { Session } from "@/components/session"
 import type { Day } from "@/lib/core/days"
 import { today } from "@/lib/core/days"
+import { isHosted } from "@/lib/core/hosted"
 import type { Question } from "@/lib/core/questions"
 
 const longDate = (date: string) =>
@@ -23,7 +24,7 @@ export function QuestionView({ day, question }: { day: Day; question: Question }
         ))}
       </div>
       <blockquote className="mt-10 font-serif text-xl leading-relaxed text-pretty">{question.prompt}</blockquote>
-      <Session day={day} question={question} />
+      <Session day={day} question={question} hosted={isHosted()} />
     </article>
   )
 }

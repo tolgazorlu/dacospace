@@ -1,7 +1,7 @@
 import { QuestionView } from "@/components/question-view"
-import { getDay } from "@/lib/core/days"
+import { dayView } from "@/lib/core/days"
 
 export default function InterviewPage() {
-  const { day, question } = getDay()
+  const { day, question } = dayView()
   return <QuestionView day={day} question={question} />
 }
