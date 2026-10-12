@@ -103,6 +103,19 @@ export function getQuestion(id: string): Question | undefined {
   return undefined
 }
 
+/**
+ * The Turkish text of a question when questions/tr/<id>.md exists. Level, minutes, topics and
+ * track always come from the English original, which stays the source of truth.
+ */
+export function localize(q: Question, lang: "en" | "tr"): Question {
+  if (lang !== "tr") return q
+  const file = path.join(questionsDir(), "tr", `${q.id}.md`)
+  if (!fs.existsSync(file)) return q
+  const tr = parseQuestion(fs.readFileSync(file, "utf8"), q.track)
+  const { title, prompt, clarifications, followUps, rubric, pitfalls } = tr
+  return { ...q, title, prompt, clarifications, followUps, rubric, pitfalls }
+}
+
 /** Validates and writes a new question file. Refuses to overwrite. */
 export function addQuestion(source: string): Question {
   const q = parseQuestion(source)
