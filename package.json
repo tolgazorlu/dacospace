@@ -16,7 +16,8 @@
     "test": "vitest run",
     "mcp": "tsx mcp/server.mts",
     "typecheck": "tsc --noEmit",
-    "setup": "bash scripts/setup.sh"
+    "setup": "bash scripts/setup.sh",
+    "sync-content": "node scripts/sync-content.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
