@@ -1,8 +1,12 @@
 import fs from "node:fs"
 import path from "node:path"
 import { z } from "zod"
+import { streakOf, today } from "./calendar"
+import { isHosted } from "./hosted"
 import { dataDir } from "./paths"
 import { LEVELS, getQuestion, loadQuestions, type Question } from "./questions"
+
+export { today }
 
 export const VERDICTS = ["strong no hire", "no hire", "lean hire", "hire", "strong hire"] as const
 
@@ -24,14 +28,6 @@ export type Day = z.infer<typeof Day>
 export type Review = z.infer<typeof Review>
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/
-
-/** Local calendar date, YYYY-MM-DD. */
-export function today(now = new Date()): string {
-  const y = now.getFullYear()
-  const m = String(now.getMonth() + 1).padStart(2, "0")
-  const d = String(now.getDate()).padStart(2, "0")
-  return `${y}-${m}-${d}`
-}
 
 const daysDir = () => path.join(dataDir(), "days")
 const dayFile = (date: string) => {
@@ -99,6 +95,33 @@ export function getDay(date = today()): { day: Day; question: Question } {
   return { day, question }
 }
 
+/**
+ * The order hosted mode walks through the bank: pickNext applied day after day from an empty
+ * history, so the demo keeps the same rules (easy first, no topic twice in a row) without storage.
+ */
+export function rotation(bank: Question[]): Question[] {
+  const history: Day[] = []
+  for (let i = 0; i < bank.length; i++) {
+    // Synthetic dates: only their order matters to pickNext.
+    history.unshift({ date: String(i).padStart(6, "0"), questionId: pickNext(bank, history).id })
+  }
+  const byId = new Map(bank.map((q) => [q.id, q]))
+  return history.reverse().map((d) => byId.get(d.questionId)!)
+}
+
+/** Hosted mode: the same question for every visitor on a date, nothing read from or written to disk. */
+export function hostedDay(date = today()): { day: Day; question: Question } {
+  if (!DATE.test(date)) throw new Error(`bad date ${date}, expected YYYY-MM-DD`)
+  const order = rotation(loadQuestions("systems"))
+  const n = Math.floor(Date.parse(`${date}T00:00:00Z`) / 86_400_000)
+  return { day: { date, questionId: order[n % order.length].id }, question: order[n % order.length] }
+}
+
+/** The day pages render: stored on disk locally, derived from the date when hosted. */
+export function dayView(date = today()): { day: Day; question: Question } {
+  return isHosted() ? hostedDay(date) : getDay(date)
+}
+
 export function saveAnswer(date: string, answer: string): Day {
   const { day } = getDay(date)
   const next = { ...day, answer, answeredAt: new Date().toISOString() }
@@ -116,13 +139,5 @@ export function saveReview(date: string, review: Omit<Review, "at">): Day {
 
 /** Consecutive answered days ending today (or yesterday, if today is still open). */
 export function streak(days = listDays(), now = today()): number {
-  const answered = new Set(days.filter((d) => d.answer).map((d) => d.date))
-  const cursor = new Date(`${now}T12:00:00`)
-  if (!answered.has(now)) cursor.setDate(cursor.getDate() - 1)
-  let n = 0
-  while (answered.has(today(cursor))) {
-    n++
-    cursor.setDate(cursor.getDate() - 1)
-  }
-  return n
+  return streakOf(new Set(days.filter((d) => d.answer).map((d) => d.date)), now)
 }
