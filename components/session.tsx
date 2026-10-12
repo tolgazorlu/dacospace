@@ -97,23 +97,21 @@ export function Session({ day, question }: { day: Day; question: Question }) {
           className="mt-4 min-h-72 resize-y font-mono text-sm leading-relaxed"
           aria-label="Your design"
         />
-        {(
-          <div className="mt-3 flex items-center gap-3">
-            <Button
-              disabled={pending || !dirty}
-              onClick={() =>
-                start(async () => {
-                  const res = await saveAnswerAction(day.date, answer)
-                  setError(res.error ?? null)
-                })
-              }
-            >
-              {pending ? "Saving" : answered ? "Update answer" : "Submit answer"}
-            </Button>
-            {error && <span role="alert" className="text-sm font-medium">{error}</span>}
-            {!error && answered && !dirty && <span className="text-sm text-muted-foreground">Saved</span>}
-          </div>
-        )}
+        <div className="mt-3 flex items-center gap-3">
+          <Button
+            disabled={pending || !dirty}
+            onClick={() =>
+              start(async () => {
+                const res = await saveAnswerAction(day.date, answer)
+                setError(res.error ?? null)
+              })
+            }
+          >
+            {pending ? "Saving" : answered ? "Update answer" : "Submit answer"}
+          </Button>
+          {error && <span role="alert" className="text-sm font-medium">{error}</span>}
+          {!error && answered && !dirty && <span className="text-sm text-muted-foreground">Saved</span>}
+        </div>
       </Section>
 
       {answered && (
