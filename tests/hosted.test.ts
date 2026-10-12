@@ -2,8 +2,11 @@ import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import { aiLabAvailable } from "../lib/core/ai-lab"
 import { dayView, hostedDay, rotation } from "../lib/core/days"
-import { LEVELS, loadQuestions } from "../lib/core/questions"
+import { labAvailable } from "../lib/core/lab"
+import { LEVELS, loadQuestions, questionSources } from "../lib/core/questions"
+import { makeLab } from "./fixtures/make-lab"
 
 describe("hosted mode", () => {
   let data: string
@@ -29,5 +32,17 @@ describe("hosted mode", () => {
     expect(hostedDay("2026-10-12").question.id).not.toBe(hostedDay("2026-10-13").question.id)
     expect(fs.readdirSync(data)).toEqual([])
     expect(() => hostedDay("../etc")).toThrow(/bad date/)
+  })
+
+  it("turns both labs off even when checkouts exist next to it", () => {
+    process.env.DACOSPACE_LAB_DIR = makeLab()
+    process.env.DACOSPACE_AI_LAB_DIR = process.env.DACOSPACE_LAB_DIR
+    fs.mkdirSync(path.join(process.env.DACOSPACE_AI_LAB_DIR, "questions"), { recursive: true })
+    expect(labAvailable()).toBe(false)
+    expect(aiLabAvailable()).toBe(false)
+    expect(questionSources().map((s) => s.track)).toEqual(["systems"])
+    delete process.env.DACOSPACE_HOSTED
+    expect(labAvailable()).toBe(true)
+    expect(questionSources().map((s) => s.track)).toEqual(["systems", "ai"])
   })
 })

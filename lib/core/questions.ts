@@ -2,6 +2,7 @@ import fs from "node:fs"
 import path from "node:path"
 import matter from "gray-matter"
 import { z } from "zod"
+import { isHosted } from "./hosted"
 import { aiLabDir, questionsDir } from "./paths"
 
 export const LEVELS = ["junior", "mid", "senior"] as const
@@ -74,7 +75,7 @@ export function parseQuestion(source: string, track: Track = "systems"): Questio
 export function questionSources(): { dir: string; track: Track }[] {
   const out: { dir: string; track: Track }[] = [{ dir: questionsDir(), track: "systems" }]
   const ai = path.join(aiLabDir(), "questions")
-  if (fs.existsSync(ai)) out.push({ dir: ai, track: "ai" })
+  if (!isHosted() && fs.existsSync(ai)) out.push({ dir: ai, track: "ai" })
   return out
 }
 

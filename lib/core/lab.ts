@@ -1,5 +1,6 @@
 import fs from "node:fs"
 import path from "node:path"
+import { isHosted } from "./hosted"
 import { labDir } from "./paths"
 
 export type MissionStatus = "todo" | "done"
@@ -44,6 +45,7 @@ export type RunResult = {
 const NN = /^\d{2}$/
 
 export function labAvailable(): boolean {
+  if (isHosted()) return false
   return fs.existsSync(path.join(labDir(), "lab")) && fs.existsSync(path.join(labDir(), "PROGRESS.md"))
 }
 

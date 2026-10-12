@@ -2,6 +2,7 @@ import fs from "node:fs"
 import path from "node:path"
 import { z } from "zod"
 import { parseDoc, type Doc } from "./lab"
+import { isHosted } from "./hosted"
 import { aiLabDir, dataDir } from "./paths"
 
 export type AiLessonRow = { nn: string; title: string; concepts: string; module: string; file: string | null }
@@ -25,7 +26,7 @@ const NN = /^\d{2}$/
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 const dir = (...p: string[]) => path.join(/*turbopackIgnore: true*/ aiLabDir(), ...p)
 
-export const aiLabAvailable = () => fs.existsSync(dir("PROGRESS.md"))
+export const aiLabAvailable = () => !isHosted() && fs.existsSync(dir("PROGRESS.md"))
 
 function lessonFile(nn: string): string | null {
   if (!fs.existsSync(dir("lessons"))) return null
