@@ -1,6 +1,9 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { Clarity } from "@/components/clarity"
+import { LocalStreak } from "@/components/hosted/local-streak"
 import { streak } from "@/lib/core/days"
+import { isHosted } from "@/lib/core/hosted"
 import { NavLink } from "@/components/nav-link"
 import { Shell } from "@/components/shell"
 import { THEME_SCRIPT, ThemeToggle } from "@/components/theme-toggle"
@@ -14,7 +17,8 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic"
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
-  const days = streak()
+  const hosted = isHosted()
+  const days = hosted ? 0 : streak()
   return (
     <html lang="en" className="dark h-full antialiased" suppressHydrationWarning>
       <head>
@@ -27,7 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               dacospace
             </Link>
             <nav className="flex items-center gap-4 text-[15px] text-muted-foreground sm:gap-6 sm:text-base">
-              {days > 0 && <span className="hidden tabular-nums sm:inline">{days}-day streak</span>}
+              {hosted ? <LocalStreak /> : days > 0 && <span className="hidden tabular-nums sm:inline">{days}-day streak</span>}
               <NavLink href="/lab">Lab</NavLink>
               <NavLink href="/ai">AI</NavLink>
               <NavLink href="/interview">Interview</NavLink>
@@ -37,6 +41,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </header>
           <main className="pt-12">{children}</main>
         </Shell>
+        <Clarity />
       </body>
     </html>
   )
