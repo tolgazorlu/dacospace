@@ -109,12 +109,16 @@ export function rotation(bank: Question[]): Question[] {
   return history.reverse().map((d) => byId.get(d.questionId)!)
 }
 
+/** Day 1 of the hosted rotation. Earlier dates show day 1 as well. */
+export const HOSTED_START = "2026-10-13"
+
 /** Hosted mode: the same question for every visitor on a date, nothing read from or written to disk. */
 export function hostedDay(date = today()): { day: Day; question: Question } {
   if (!DATE.test(date)) throw new Error(`bad date ${date}, expected YYYY-MM-DD`)
   const order = rotation(loadQuestions())
-  const n = Math.floor(Date.parse(`${date}T00:00:00Z`) / 86_400_000)
-  return { day: { date, questionId: order[n % order.length].id }, question: order[n % order.length] }
+  const n = Math.max(0, Math.round((Date.parse(`${date}T00:00:00Z`) - Date.parse(`${HOSTED_START}T00:00:00Z`)) / 86_400_000))
+  const question = order[n % order.length]
+  return { day: { date, questionId: question.id }, question }
 }
 
 /** The day pages render: stored on disk locally, derived from the date when hosted. */
