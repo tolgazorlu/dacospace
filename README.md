@@ -9,7 +9,7 @@ A daily learning loop for backend and system design:
    embeds the Grafana panels, and keeps your notebook.
 3. **Interview**: one realistic system design interview question, with an AI interviewer.
 
-**Live demo:** https://dacospace.vercel.app (the daily interview question; answers stay in your browser).
+**Live demo:** https://dacospace.vercel.app (every lesson, mission, incident file and the daily interview question; nothing runs there, and your answers stay in your browser).
 
 The 2024 dacospace tried to teach everything at once. This version shows one step at a time: the
 lesson before the lab, the clarifications only when you ask, the rubric only after you answer.
@@ -84,8 +84,14 @@ then writes nothing and spawns nothing:
 - the interview question follows from the date (the bank in the order `pickNext` would walk it), so every
   visitor gets the same one,
 - answers, the streak and the archive live in the visitor's `localStorage`,
-- the lab, the AI lab and AI questions are off, and their pages explain how to run dacospace locally,
-- `/api/lab/*` answers 404 and every server action throws.
+- lessons, missions, incident files and AI questions come from a read-only snapshot in `content/`; missions
+  show no Run buttons, console, Grafana or notebook, and nobody's progress is shown,
+- `/api/lab/*` answers 404, every server action throws, and the spawn/kill helpers refuse to run.
+
+`content/` is generated, never edited by hand: `pnpm sync-content` copies an allowlist (markdown lessons,
+missions, case files, questions and the roadmap tables with every status reset to `todo` and the log
+dropped) from the sibling checkouts, and refuses any file that contains a machine path or a key.
+Commit the result and redeploy to publish new material.
 
 Set `NEXT_PUBLIC_CLARITY_ID` on the host to load Microsoft Clarity; without it no analytics script loads.
 
