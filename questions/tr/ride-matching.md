@@ -1,6 +1,6 @@
 ---
 id: ride-matching
-title: Bir ride-hailing uygulaması için driver-matching sistemini tasarla
+title: Bir ride-hailing uygulaması için driver-matching sistemi tasarla
 level: senior
 topics: [geospatial-indexing, dispatch, real-time-systems, queueing]
 minutes: 45

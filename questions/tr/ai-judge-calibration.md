@@ -1,6 +1,6 @@
 ---
 id: ai-judge-calibration
-title: Yanlış kalibre edilmiş bir LLM judge'ı diagnose et ve kalibre et
+title: Yanlış kalibre edilmiş bir LLM judge'ı teşhis et ve yeniden kalibre et
 level: senior
 topics: [ai, evals, llm-judge, observability]
 minutes: 45
@@ -8,7 +8,7 @@ minutes: 45
 
 ## Prompt
 
-RAG-tabanlı support bot'un, eval dashboard'unda bir LLM judge'dan %92 "helpfulness" skoru alıyor, ama müşteri şikayetleri refund policy'siyle ilgili cevapların kendinden çok emin bir şekilde yanlış olduğunu söylüyor. Eval'i diagnose et ve düzelt.
+RAG tabanlı support bot'un, eval dashboard'unda bir LLM judge'dan %92 "helpfulness" skoru alıyor. Ama müşteri şikayetlerine göre refund policy'siyle ilgili cevaplar kendinden emin bir şekilde yanlış. Eval'deki sorunu teşhis et ve düzelt.
 
 ## Clarifications
 
