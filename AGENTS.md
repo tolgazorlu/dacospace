@@ -14,7 +14,7 @@ Daily learning loop: lesson -> lab -> interview. Next.js web app + stdio MCP
 server sharing `lib/core/`. Interview questions are markdown in `questions/`
 (format in `questions/README.md`), personal data in `data/` (gitignored).
 
-The lab content and CLI live in `~/projects/java-scale-lab` (`DACOSPACE_LAB_DIR`).
+The lab content and CLI live in a sibling `java-scale-lab` checkout (`DACOSPACE_LAB_DIR`).
 dacospace parses its `PROGRESS.md` table and the `# Mission NN · Title` /
 `# Lesson NN · Title` headings; keep both repos' formats in sync.
 
