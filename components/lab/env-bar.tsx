@@ -30,7 +30,7 @@ export function EnvBar() {
   const [pending, setPending] = useState(false)
 
   const refresh = useCallback(async () => {
-    const res = await fetch(`/api/lab/env${showLog ? "?log" : ""}`, { cache: "no-store" })
+    const res = await fetch(`/api/lab/env${showLog ? "?log" : ""}`, { cache: "no-store", headers: HEADERS })
     if (res.ok) setEnv(await res.json())
   }, [showLog])
 

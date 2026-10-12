@@ -1,5 +1,8 @@
 import "server-only"
 
+/** Header the app's own fetches send; a cross-site form, <img> or simple GET cannot add it. */
+export const APP_HEADER = "x-dacospace"
+
 /**
  * dacospace runs shell commands on this machine, so its API only answers the
  * local browser tab it served:
@@ -20,7 +23,7 @@ export function rejectUnlessLocal(req: Request): Response | null {
     } catch {}
     if (originHost !== host) return new Response("cross-origin request refused", { status: 403 })
   }
-  if (req.method !== "GET" && req.headers.get("x-dacospace") !== "1") {
+  if (req.headers.get(APP_HEADER) !== "1") {
     return new Response("missing x-dacospace header", { status: 403 })
   }
   return null

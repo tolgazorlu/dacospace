@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useTheme } from "@/components/theme-toggle"
+import { HEADERS } from "./console-context"
 
 // Panel ids from java-scale-lab infra/observability/dashboards/scale-lab.json
 const VIEWS = {
@@ -29,7 +30,7 @@ export function LivePanels({ grafanaUp }: { grafanaUp: boolean }) {
   const [app, setApp] = useState<string | null>(null)
   useEffect(() => {
     const poll = async () => {
-      const res = await fetch("/api/lab/env", { cache: "no-store" }).catch(() => null)
+      const res = await fetch("/api/lab/env", { cache: "no-store", headers: HEADERS }).catch(() => null)
       if (res?.ok) setApp((await res.json()).app)
     }
     const first = setTimeout(poll, 0)
