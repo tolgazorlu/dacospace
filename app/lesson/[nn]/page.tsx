@@ -8,15 +8,17 @@ import { lessonReadAction } from "@/app/lab-actions"
 import { getLesson, getMission, labAvailable } from "@/lib/core/lab"
 import { readNotebook } from "@/lib/core/notebook"
 import { isHosted } from "@/lib/core/hosted"
-import { getT } from "@/lib/i18n/server"
+import { getLang } from "@/lib/i18n/server"
+import { messages } from "@/lib/i18n/messages"
 
 export default async function LessonPage({ params }: PageProps<"/lesson/[nn]">) {
   const { nn } = await params
-  const t = await getT()
+  const lang = await getLang()
+  const t = messages(lang)
   if (!labAvailable()) return <LabMissing />
-  const lesson = getLesson(nn)
+  const lesson = getLesson(nn, lang)
   if (!lesson) notFound()
-  const mission = getMission(nn)
+  const mission = getMission(nn, lang)
   const read = Boolean(readNotebook(nn).lessonReadAt)
   return (
     <article>

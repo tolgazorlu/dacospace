@@ -1,7 +1,7 @@
 import fs from "node:fs"
 import path from "node:path"
 import { isHosted } from "./hosted"
-import { labDir } from "./paths"
+import { labDir, localizedFile, type Lang } from "./paths"
 
 export type MissionStatus = "todo" | "done"
 
@@ -117,14 +117,14 @@ export function parseDoc(source: string, kind: Doc["kind"]): Doc {
   return { nn: m[1], kind, title: m[2].trim(), meta, body: lines.slice(consumed).join("\n").trim() }
 }
 
-function readDoc(dir: string, kind: Doc["kind"], nn: string): Doc | undefined {
+function readDoc(dir: string, kind: Doc["kind"], nn: string, lang: Lang): Doc | undefined {
   if (!NN.test(nn)) return undefined
   const rel = findFile(dir, nn)
-  return rel ? parseDoc(fs.readFileSync(/*turbopackIgnore: true*/ path.join(/*turbopackIgnore: true*/ labDir(), rel), "utf8"), kind) : undefined
+  return rel ? parseDoc(fs.readFileSync(/*turbopackIgnore: true*/ localizedFile("java-scale-lab", labDir(), rel, lang), "utf8"), kind) : undefined
 }
 
-export const getMission = (nn: string) => readDoc("labs", "mission", nn)
-export const getLesson = (nn: string) => readDoc("lessons", "lesson", nn)
+export const getMission = (nn: string, lang: Lang = "en") => readDoc("labs", "mission", nn, lang)
+export const getLesson = (nn: string, lang: Lang = "en") => readDoc("lessons", "lesson", nn, lang)
 
 /** Load scenarios available in load/ (k6 scripts), without the .js extension. */
 export function listScenarios(): string[] {

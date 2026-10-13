@@ -35,3 +35,17 @@ describe("localize", () => {
     expect(localize(made, "tr")).toBe(made)
   })
 })
+
+describe("localized lab content", () => {
+  it("reads content/tr when it exists and falls back to English", async () => {
+    const fs = await import("node:fs")
+    const path = await import("node:path")
+    const { localizedFile } = await import("../lib/core/paths")
+    const base = path.resolve(__dirname, "..", "content", "java-scale-lab")
+    const rel = "lessons/01-why-the-average-lies.md"
+    expect(localizedFile("java-scale-lab", base, rel, "en")).toBe(path.join(base, rel))
+    const tr = localizedFile("java-scale-lab", base, rel, "tr")
+    expect(tr).toBe(fs.existsSync(path.resolve(__dirname, "..", "content", "tr", "java-scale-lab", rel)) ? path.resolve(__dirname, "..", "content", "tr", "java-scale-lab", rel) : path.join(base, rel))
+    expect(localizedFile("java-scale-lab", base, "lessons/99-none.md", "tr")).toBe(path.join(base, "lessons/99-none.md"))
+  })
+})

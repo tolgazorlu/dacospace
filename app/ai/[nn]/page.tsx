@@ -19,7 +19,7 @@ export default async function AiLessonPage({ params }: PageProps<"/ai/[nn]">) {
   const rows = readAiRoadmap()
   const row = rows.find((r) => r.nn === nn)
   if (!row) notFound()
-  const lesson = getAiLesson(nn)
+  const lesson = getAiLesson(nn, lang)
   const progress = readAiProgress()
   const read = Boolean(progress.lessons[nn])
   const hosted = isHosted()
@@ -29,13 +29,13 @@ export default async function AiLessonPage({ params }: PageProps<"/ai/[nn]">) {
   const cases = (lesson?.meta.cases ?? "")
     .split(/[,\s]+/)
     .filter(Boolean)
-    .map((slug) => getCase(slug))
+    .map((slug) => getCase(slug, lang))
     .filter((c) => c !== undefined)
 
   return (
     <article>
       <p className="text-sm text-muted-foreground">
-        {t.ai.lessonKicker(nn, row.module, lesson?.meta["reading time"] && t.common.duration(lesson.meta["reading time"]))}
+        {t.ai.lessonKicker(nn, t.ai.module(row.module), lesson?.meta["reading time"] && t.common.duration(lesson.meta["reading time"]))}
       </p>
       <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance">{lesson?.title ?? row.title}</h1>
       <p className="mt-3 text-muted-foreground">{lesson?.meta.concepts ?? row.concepts}</p>

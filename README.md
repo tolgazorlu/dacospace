@@ -81,7 +81,10 @@ Answers and reviews live in `data/days/<date>.json` (gitignored). Set
 The header switch (EN / TR) sets a `lang` cookie; without it, a Turkish browser gets Turkish. UI strings live in
 `lib/i18n/messages.ts`. Interview questions have Turkish versions in `questions/tr/<id>.md`: same frontmatter,
 same English section headings, one Turkish bullet per English bullet, technical terms kept in English
-(`tests/questions-tr.test.ts` checks the structure). Lessons, missions and case files stay in English.
+(`tests/questions-tr.test.ts` checks the structure). Lessons, missions and case files have Turkish versions in
+`content/tr/<repo>/<path>`, read in both modes and falling back to English; `tests/content-tr.test.ts` keeps them
+in step with the English file (code blocks, headings, tables, links, numbers). After `pnpm sync-content`
+brings in changed English files, that test names the translations to update.
 
 ## Hosted mode
 

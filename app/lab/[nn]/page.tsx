@@ -27,7 +27,7 @@ const evidenceTemplate = (text: string | null) => {
   return (first >= 0 ? lines.slice(first) : lines).join("\n").trim()
 }
 
-const NOTEBOOK_SECTIONS = /^(\d+\.\s*)?(Evidence|In your own words|Check question)/i
+const NOTEBOOK_SECTIONS = /^(\d+\.\s*)?(Evidence|In your own words|Check question|Kanıt|Kendi cümlelerinle|Kontrol sorusu)/i
 
 export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
   const { nn } = await params
@@ -37,8 +37,8 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
   const { missions, log } = readProgress()
   const row = missions.find((m) => m.nn === nn)
   if (!row) notFound()
-  const mission = getMission(nn)
-  const lesson = getLesson(nn)
+  const mission = getMission(nn, lang)
+  const lesson = getLesson(nn, lang)
   const notebook = readNotebook(nn)
   const done = row.status === "done"
   const prev = missions[missions.indexOf(row) - 1]
@@ -144,8 +144,8 @@ export default async function MissionPage({ params }: PageProps<"/lab/[nn]">) {
             <Notebook
               nn={nn}
               initial={notebook}
-              evidenceTemplate={evidenceTemplate(section(mission.body, /Evidence/i))}
-              checkQuestion={section(mission.body, /^Check question/i)}
+              evidenceTemplate={evidenceTemplate(section(mission.body, /Evidence|Kanıt/i))}
+              checkQuestion={section(mission.body, /^(Check question|Kontrol sorusu)/i)}
               done={done}
             />
             {takeaway && (

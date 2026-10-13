@@ -1,3 +1,4 @@
+import fs from "node:fs"
 import path from "node:path"
 import { isHosted } from "./hosted"
 
@@ -16,3 +17,16 @@ export const aiLabDir = () => process.env.DACOSPACE_AI_LAB_DIR ?? sibling("ai-sy
  * Default: a sibling folder, so `git clone` both repos into the same parent and it just works.
  */
 export const labDir = () => process.env.DACOSPACE_LAB_DIR ?? sibling("java-scale-lab")
+
+export type Lang = "en" | "tr"
+/**
+ * The file to read for one lab document in a language. Turkish translations live in dacospace, at
+ * content/tr/<repo>/<rel>, for both modes; the English file stays the source of truth and the fallback.
+ */
+export function localizedFile(repo: "java-scale-lab" | "ai-systems-lab", base: string, rel: string, lang: Lang = "en"): string {
+  if (lang === "tr") {
+    const tr = path.join(contentDir(), "tr", repo, rel)
+    if (fs.existsSync(tr)) return tr
+  }
+  return path.join(base, rel)
+}

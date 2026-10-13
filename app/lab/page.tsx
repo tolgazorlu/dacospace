@@ -2,10 +2,16 @@ import Link from "next/link"
 import { LabMissing } from "@/components/lab/lab-missing"
 import { currentMission, labAvailable, readProgress } from "@/lib/core/lab"
 import { isHosted } from "@/lib/core/hosted"
-import { getT } from "@/lib/i18n/server"
+import { getLang } from "@/lib/i18n/server"
+import { messages } from "@/lib/i18n/messages"
+import { getLesson, getMission } from "@/lib/core/lab"
 
 export default async function LabPage() {
-  const t = await getT()
+  const lang = await getLang()
+  const t = messages(lang)
+  // Turkish titles come from the translated mission (or lesson) file; the roadmap table is English.
+  const title = (m: { nn: string; title: string }) =>
+    lang === "tr" ? (getMission(m.nn, lang)?.title ?? getLesson(m.nn, lang)?.title ?? m.title) : m.title
   if (!labAvailable()) return <LabMissing />
   const { missions, log } = readProgress()
   const current = currentMission(missions)
@@ -26,7 +32,7 @@ export default async function LabPage() {
                 <span className="w-6 shrink-0 font-mono text-xs tabular-nums text-muted-foreground">{m.nn}</span>
                 <span className="flex-1">
                   <span className={`group-hover:underline underline-offset-4 ${m.missionFile || m.lessonFile ? "" : "text-muted-foreground"}`}>
-                    {m.title}
+                    {title(m)}
                   </span>
                   <span className="mt-0.5 block text-sm text-muted-foreground">{m.concept}</span>
                 </span>

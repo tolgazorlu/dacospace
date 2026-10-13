@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { AiMissing } from "@/components/ai/ai-missing"
-import { aiLabAvailable, listCases, nextAiLesson, readAiProgress, readAiRoadmap } from "@/lib/core/ai-lab"
+import { aiLabAvailable, getAiLesson, listCases, nextAiLesson, readAiProgress, readAiRoadmap } from "@/lib/core/ai-lab"
 import { loadQuestions, localize } from "@/lib/core/questions"
 import { getLang } from "@/lib/i18n/server"
 import { messages } from "@/lib/i18n/messages"
@@ -28,7 +28,7 @@ export default async function AiLabPage() {
   const rows = readAiRoadmap()
   const progress = readAiProgress()
   const next = nextAiLesson(rows, progress)
-  const cases = listCases()
+  const cases = listCases(lang)
   const questions = loadQuestions("ai").map((q) => localize(q, lang))
   const read = rows.filter((r) => progress.lessons[r.nn]).length
   const hosted = isHosted()
@@ -55,7 +55,7 @@ export default async function AiLabPage() {
       <section id="lessons" className="mt-12 scroll-mt-8">
         {modules.map((mod) => (
           <div key={mod} className="mt-10 first:mt-0">
-            <h2 className="text-sm font-semibold">{mod}</h2>
+            <h2 className="text-sm font-semibold">{t.ai.module(mod)}</h2>
             <ol className="mt-2 divide-y">
               {rows
                 .filter((r) => r.module === mod)
@@ -66,7 +66,7 @@ export default async function AiLabPage() {
                       key={r.nn}
                       href={`/ai/${r.nn}`}
                       lead={r.nn}
-                      title={r.title}
+                      title={lang === "tr" && r.file ? (getAiLesson(r.nn, lang)?.title ?? r.title) : r.title}
                       detail={r.concepts}
                       state={progress.lessons[r.nn] ? t.ai.read : isNext ? t.ai.next : r.file ? "" : t.ai.notWritten}
                       strong={isNext}
