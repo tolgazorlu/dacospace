@@ -56,8 +56,8 @@ export default async function TodayPage() {
   const lab = labAvailable()
   const progress = lab ? readProgress() : null
   const m = progress ? currentMission(progress.missions) : undefined
-  const lesson = m ? getLesson(m.nn) : undefined
-  const mission = m ? getMission(m.nn) : undefined
+  const lesson = m ? getLesson(m.nn, lang) : undefined
+  const mission = m ? getMission(m.nn, lang) : undefined
   const nb = m ? readNotebook(m.nn) : undefined
   const missionDone = m?.status === "done"
   const lessonRead = Boolean(nb?.lessonReadAt)
@@ -65,7 +65,7 @@ export default async function TodayPage() {
   const aiRows = aiLabAvailable() ? readAiRoadmap() : []
   const aiProgress = aiRows.length ? readAiProgress() : null
   const ai = aiProgress ? nextAiLesson(aiRows, aiProgress) : undefined
-  const aiLesson = ai ? getAiLesson(ai.nn) : undefined
+  const aiLesson = ai ? getAiLesson(ai.nn, lang) : undefined
   const aiRead = aiRows.filter((r) => aiProgress?.lessons[r.nn]).length
 
   return (

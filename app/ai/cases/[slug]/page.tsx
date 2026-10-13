@@ -4,7 +4,7 @@ import { AiMarkdown } from "@/components/ai/ai-markdown"
 import { AiMissing } from "@/components/ai/ai-missing"
 import { CaseReveal } from "@/components/ai/case-reveal"
 import { PromptCard } from "@/components/prompt-card"
-import { aiLabAvailable, getCase, readAiProgress, readAiRoadmap } from "@/lib/core/ai-lab"
+import { aiLabAvailable, getAiLesson, getCase, readAiProgress, readAiRoadmap } from "@/lib/core/ai-lab"
 import { aiCasePrompt } from "@/lib/core/prompts"
 import { isHosted } from "@/lib/core/hosted"
 import { getLang } from "@/lib/i18n/server"
@@ -15,7 +15,7 @@ export default async function CasePage({ params }: PageProps<"/ai/cases/[slug]">
   const lang = await getLang()
   const t = messages(lang)
   if (!aiLabAvailable()) return <AiMissing />
-  const c = getCase(slug)
+  const c = getCase(slug, lang)
   if (!c) notFound()
   const state = readAiProgress().cases[slug]
   const lessons = readAiRoadmap().filter((r) => c.lessons.includes(r.nn))
@@ -56,7 +56,7 @@ export default async function CasePage({ params }: PageProps<"/ai/cases/[slug]">
             {lessons.map((l) => (
               <li key={l.nn}>
                 <Link href={`/ai/${l.nn}`} className="font-medium underline underline-offset-4">
-                  {l.nn} · {l.title}
+                  {l.nn} · {lang === "tr" && l.file ? (getAiLesson(l.nn, lang)?.title ?? l.title) : l.title}
                 </Link>
               </li>
             ))}

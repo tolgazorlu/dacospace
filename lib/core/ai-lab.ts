@@ -3,7 +3,7 @@ import path from "node:path"
 import { z } from "zod"
 import { parseDoc, type Doc } from "./lab"
 import { isHosted } from "./hosted"
-import { aiLabDir, dataDir } from "./paths"
+import { aiLabDir, dataDir, localizedFile, type Lang } from "./paths"
 
 export type AiLessonRow = { nn: string; title: string; concepts: string; module: string; file: string | null }
 
@@ -45,10 +45,12 @@ export function readAiRoadmap(): AiLessonRow[] {
   return rows
 }
 
-export function getAiLesson(nn: string): Doc | undefined {
+const localized = (rel: string, lang: Lang) => localizedFile("ai-systems-lab", aiLabDir(), rel, lang)
+
+export function getAiLesson(nn: string, lang: Lang = "en"): Doc | undefined {
   if (!NN.test(nn)) return undefined
   const f = lessonFile(nn)
-  return f ? parseDoc(fs.readFileSync(dir("lessons", f), "utf8"), "lesson") : undefined
+  return f ? parseDoc(fs.readFileSync(localized(path.join("lessons", f), lang), "utf8"), "lesson") : undefined
 }
 
 /** "**Category:** Security · **Lessons:** 08, 09 · **Severity:** ..." plus the title line. */
@@ -67,7 +69,7 @@ export function parseCase(slug: string, source: string): CaseFile {
   }
   const body = lines.slice(i).join("\n").trim()
   // Split right before the first "##" section that follows "## Stop and think".
-  const stop = body.search(/^## Stop and think/m)
+  const stop = body.search(/^## (Stop and think|Dur ve düşün)/m)
   let before = body
   let after = ""
   if (stop >= 0) {
@@ -88,22 +90,22 @@ export function parseCase(slug: string, source: string): CaseFile {
   }
 }
 
-export function listCases(): CaseMeta[] {
+export function listCases(lang: Lang = "en"): CaseMeta[] {
   if (!fs.existsSync(dir("cases"))) return []
   return fs
     .readdirSync(dir("cases"))
     .filter((f) => f.endsWith(".md") && SLUG.test(f.slice(0, -3)))
     .map((f) => {
-      const c = parseCase(f.slice(0, -3), fs.readFileSync(dir("cases", f), "utf8"))
+      const c = parseCase(f.slice(0, -3), fs.readFileSync(localized(path.join("cases", f), lang), "utf8"))
       return { slug: c.slug, title: c.title, category: c.category, severity: c.severity, lessons: c.lessons }
     })
     .sort((a, b) => a.category.localeCompare(b.category) || a.title.localeCompare(b.title))
 }
 
-export function getCase(slug: string): CaseFile | undefined {
+export function getCase(slug: string, lang: Lang = "en"): CaseFile | undefined {
   if (!SLUG.test(slug)) return undefined
-  const f = dir("cases", `${slug}.md`)
-  return fs.existsSync(f) ? parseCase(slug, fs.readFileSync(f, "utf8")) : undefined
+  if (!fs.existsSync(dir("cases", `${slug}.md`))) return undefined
+  return parseCase(slug, fs.readFileSync(localized(path.join("cases", `${slug}.md`), lang), "utf8"))
 }
 
 /* Progress, kept in dacospace's data folder (the lab repo stays read-only). */

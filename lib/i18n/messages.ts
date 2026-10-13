@@ -232,6 +232,7 @@ const en = {
     saveReveal: "Save and reveal what happened",
     revealBlind: "Reveal without guessing",
     designQuestion: "AI design question",
+    module: (m: string) => m,
     interviewTitle: "Get interviewed by your AI",
     interviewDescription:
       "A full mock interview: your assistant reads only the prompt aloud, answers your clarifying questions, pushes on weak spots, then grades you against the rubric.",
@@ -484,6 +485,8 @@ const tr: Messages = {
     saveReveal: "Kaydet ve ne olduğunu göster",
     revealBlind: "Tahmin etmeden göster",
     designQuestion: "AI tasarım sorusu",
+    module: (m) =>
+      ({ Foundations: "Temeller", Agents: "Agent'lar", Security: "Güvenlik", Evals: "Eval'lar", Knowledge: "Bilgi ve RAG", Production: "Production", Capstone: "Bitirme projesi" })[m] ?? m,
     interviewTitle: "AI'ınla mülakat yap",
     interviewDescription:
       "Tam bir mock mülakat: asistanın sadece soruyu okur, netleştirme sorularını cevaplar, zayıf noktalara bastırır, sonra seni değerlendirme kriterlerine göre puanlar.",
