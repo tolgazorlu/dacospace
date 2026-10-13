@@ -1,6 +1,8 @@
 import fs from "node:fs"
 import path from "node:path"
 import { describe, expect, it } from "vitest"
+import { parseCase } from "../lib/core/ai-lab"
+import { parseDoc, section } from "../lib/core/lab"
 
 // Turkish translations of the lab content live in content/tr/<repo>/<same path>. The English file is the
 // source of truth; a translation must keep everything a parser, a Run button or a reader relies on.
@@ -30,7 +32,8 @@ function head(s: string) {
   let j = i + 1
   while (j < ls.length && !ls[j].trim()) j++
   const meta: string[] = []
-  for (; j < ls.length && /^\*\*[^*]+:\*\*/.test(ls[j]); j++) meta.push(ls[j])
+  // Case severity is a sentence shown to readers, so it is translated; every other key and value stays.
+  for (; j < ls.length && /^\*\*[^*]+:\*\*/.test(ls[j]); j++) meta.push(ls[j].replace(/(\*\*Severity:\*\* ).*$/, "$1…"))
   return { prefix, meta }
 }
 
@@ -60,5 +63,16 @@ describe("Turkish lab content", () => {
     expect(numbers(tr), "every number kept").toEqual(numbers(en))
     for (const [enRe, trRe] of SECTION_PAIRS) expect(trRe.test(tr), `section ${enRe} uses its fixed Turkish name`).toBe(enRe.test(en))
     expect(prose(tr).includes("—"), "no em dashes in prose").toBe(false)
+    // What the app pulls out of the file must be found in the translation too.
+    if (rel.includes("/cases/")) {
+      const [c, e] = [parseCase("x", tr), parseCase("x", en)]
+      expect(Boolean(c.after), "case reveal split").toBe(Boolean(e.after))
+    } else {
+      const kind = rel.includes("/labs/") ? "mission" : "lesson"
+      const [d, e] = [parseDoc(tr, kind), parseDoc(en, kind)]
+      expect(d.meta).toEqual(e.meta)
+      expect(Boolean(section(d.body, /Evidence|Kanıt/i)), "evidence section").toBe(Boolean(section(e.body, /Evidence/i)))
+      expect(Boolean(section(d.body, /^(Check question|Kontrol sorusu)/i)), "check question").toBe(Boolean(section(e.body, /^Check question/i)))
+    }
   })
 })

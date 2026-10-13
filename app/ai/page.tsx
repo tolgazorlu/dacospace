@@ -85,7 +85,7 @@ export default async function AiLabPage() {
         </p>
         {categories.map((cat) => (
           <div key={cat} className="mt-8">
-            <h3 className="text-sm font-semibold">{cat}</h3>
+            <h3 className="text-sm font-semibold">{t.ai.module(cat)}</h3>
             <ol className="mt-2 divide-y">
               {cases
                 .filter((c) => c.category === cat)
