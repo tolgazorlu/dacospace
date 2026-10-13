@@ -24,7 +24,7 @@ export default async function CasePage({ params }: PageProps<"/ai/cases/[slug]">
   return (
     <article>
       <p className="text-sm text-muted-foreground">
-        <Link href="/ai#cases" className="hover:text-foreground">{t.ai.incidentFile}</Link> · {c.category}
+        <Link href="/ai#cases" className="hover:text-foreground">{t.ai.incidentFile}</Link> · {t.ai.module(c.category)}
       </p>
       <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance">{c.title}</h1>
       {c.severity && <p className="mt-3 text-muted-foreground">{c.severity}</p>}
