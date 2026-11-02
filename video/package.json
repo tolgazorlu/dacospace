@@ -1,0 +1,22 @@
+{
+  "name": "dacospace-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "tts": "node tts.ts",
+    "voices": "node tts.ts --voices",
+    "studio": "remotion studio src/index.ts",
+    "render": "sh -c 'remotion render src/index.ts $0 out/$0.mp4'"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.534",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "remotion": "4.0.534"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "19.2.2",
+    "typescript": "5.9.3"
+  }
+}
